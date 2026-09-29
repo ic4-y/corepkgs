@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Pre-push hook: run the full local gate before a push leaves the machine.
+#
+# This file does NOT exist upstream (ekala-project/corepkgs ships only .githooks/pre-commit),
+# and it is added here as part of the content-format work.
+#
+# ADVISORY, like every hook: bypassable with `--no-verify` and absent on a fresh clone. The
+# contract rests on CI. This exists so a contributor does not discover the failure in CI.
+#
+# It invokes the SAME validator the CI job invokes — `scripts/docs-pipeline.sh` — rather
+# than restating the check, so hook and CI cannot drift into two implementations.
+set -euo pipefail
+
+echo "pre-push: running the content-format gate"
+
+if ! nix develop .#default -c bash scripts/docs-pipeline.sh --check; then
+  echo "pre-push: the content-format gate failed." >&2
+  echo "pre-push: regenerate the committed JSON with the pinned parser and amend your commit." >&2
+  exit 1
+fi
+
+echo "pre-push: content-format gate passed"
