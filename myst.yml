@@ -1,0 +1,20 @@
+version: 1
+project:
+  title: corepkgs
+  # THE PARTICIPATING PAGE SET, named explicitly. Without a toc the emitter walks every
+  # markdown file in the repository — 33 of them — and 20 share the basename README.md, so
+  # they collide into readme.json plus readme-1..19.json. A page's identity must come from
+  # where it lives, not from its filename.
+  toc:
+    - file: docs/major-differences-nixpkgs.md
+    - title: Common Issues
+      children:
+        - file: docs/common-issues/README.md
+        - file: docs/common-issues/cmake-packages.md
+        - file: docs/common-issues/compiler-errors.md
+        - file: docs/common-issues/dependency-failures.md
+        - file: docs/common-issues/obsolete-patches.md
+        - file: docs/common-issues/python-packages.md
+        - file: docs/common-issues/rust-packages.md
+site:
+  template: ./docs-site-template

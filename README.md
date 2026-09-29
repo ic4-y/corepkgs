@@ -50,6 +50,21 @@ top-level.nix # Overlay for specifying overrides at `pkgs` scope
 default.nix   # Entry point for people to import
 ```
 
+## Documentation
+
+The documentation published for this repository is authored in markdown under `docs/` and
+committed as a validated artifact in `docs/.interchange/`. Both halves are gated: a page edited
+without regenerating its artifact fails, and so does an artifact edited by hand.
+
+```bash
+nix develop .#default -c bash scripts/docs-pipeline.sh --write    # regenerate the artifact
+nix develop .#default -c bash scripts/docs-pipeline.sh --check    # validate
+```
+
+See [`scripts/README.md`](./scripts/README.md#docs-pipeline) for the authoring and regeneration
+workflow, and [`docs/major-differences-nixpkgs.md`](./docs/major-differences-nixpkgs.md) for the
+documentation itself.
+
 ## Binary cache
 
 *WARNING*: This is a personal server, and should be considered untrusted

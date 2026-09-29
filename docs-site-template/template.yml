@@ -1,0 +1,5 @@
+jtex: v1
+kind: site
+title: corepkgs
+description: offline; local template so the emitter needs no network
+files: []
