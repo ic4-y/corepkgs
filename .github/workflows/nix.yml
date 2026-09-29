@@ -11,6 +11,11 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    # Surfaced for the guarded cache push below: a step-level `if` cannot read `secrets`, but a
+    # job-level env can, and an empty value simply skips the push.
+    env:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
     steps:
     - uses: actions/checkout@v4
     - uses: cachix/install-nix-action@v25
@@ -29,7 +34,7 @@ jobs:
     # moment the token is added. The cache name and public key are the README's and this file's
     # own `extra-substituters`, not a second cache.
     - uses: cachix/cachix-action@v15
-      if: ${{ secrets.CACHIX_AUTH_TOKEN != '' }}
+      if: ${{ env.CACHIX_AUTH_TOKEN != '' }}
       with:
         name: ekala-corepkgs
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
@@ -43,6 +48,11 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    # Surfaced for the guarded cache push below: a step-level `if` cannot read `secrets`, but a
+    # job-level env can, and an empty value simply skips the push.
+    env:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
     steps:
     - uses: actions/checkout@v4
     - uses: cachix/install-nix-action@v25
@@ -61,7 +71,7 @@ jobs:
     # moment the token is added. The cache name and public key are the README's and this file's
     # own `extra-substituters`, not a second cache.
     - uses: cachix/cachix-action@v15
-      if: ${{ secrets.CACHIX_AUTH_TOKEN != '' }}
+      if: ${{ env.CACHIX_AUTH_TOKEN != '' }}
       with:
         name: ekala-corepkgs
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
@@ -74,6 +84,11 @@ jobs:
   docs:
 
     runs-on: ubuntu-latest
+
+    # Surfaced for the guarded cache push below: a step-level `if` cannot read `secrets`, but a
+    # job-level env can, and an empty value simply skips the push.
+    env:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
     steps:
     - uses: actions/checkout@v4
@@ -103,7 +118,7 @@ jobs:
     # moment the token is added. The cache name and public key are the README's and this file's
     # own `extra-substituters`, not a second cache.
     - uses: cachix/cachix-action@v15
-      if: ${{ secrets.CACHIX_AUTH_TOKEN != '' }}
+      if: ${{ env.CACHIX_AUTH_TOKEN != '' }}
       with:
         name: ekala-corepkgs
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
