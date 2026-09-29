@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "ekala-org": {
+      "locked": {
+        "lastModified": 1790698316,
+        "narHash": "sha256-N7BIG1Q8S4G6g+MksfIkpF56DCzhEo1pkRw0ysL+3tc=",
+        "ref": "refs/heads/node/format-artifact",
+        "rev": "d7625e54c99fca55239e52c84cd268b905f370ff",
+        "revCount": 129,
+        "type": "git",
+        "url": "https://github.com/ekala-project/ekala-org"
+      },
+      "original": {
+        "ref": "refs/heads/node/format-artifact",
+        "type": "git",
+        "url": "https://github.com/ekala-project/ekala-org"
+      }
+    },
     "nix-lib": {
       "locked": {
         "lastModified": 1787401631,
@@ -17,6 +33,22 @@
     },
     "nixpkgs": {
       "locked": {
+        "lastModified": 1790600678,
+        "narHash": "sha256-6k3n7X2UsZ6tAlWTz99RimiZab+17tMUrw9sRUcELiA=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f45c6f04c2f013f004bf94e284e95d72898d9393",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
         "lastModified": 1770107345,
         "narHash": "sha256-tbS0Ebx2PiA1FRW8mt8oejR0qMXmziJmPaU1d4kYY9g=",
         "owner": "nixos",
@@ -33,7 +65,9 @@
     },
     "root": {
       "inputs": {
+        "ekala-org": "ekala-org",
         "nix-lib": "nix-lib",
+        "nixpkgs": "nixpkgs",
         "systems": "systems",
         "treefmt-nix": "treefmt-nix"
       }
@@ -55,7 +89,7 @@
     },
     "treefmt-nix": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
         "lastModified": 1786901030,
