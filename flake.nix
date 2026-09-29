@@ -61,6 +61,33 @@
       );
       formatter = forAllSystems (system: mkTreefmt legacyPackages.${system});
 
+      # The content-format gate as a DERIVATION, so it is runnable hermetically and can be
+      # wired into `nix flake check` — the CI job and the hooks invoke the same script through
+      # the devshell, which is right for a contributor but not a build. Both the emitter and
+      # the validator come from the same inputs the devshell uses, so this check and the CI job
+      # cannot validate against different tools.
+      checks = forAllSystems (system: {
+        docs =
+          nixpkgs.legacyPackages.${system}.runCommand "docs-content-format-check"
+            {
+              nativeBuildInputs = [
+                nixpkgs.legacyPackages.${system}.bash
+                nixpkgs.legacyPackages.${system}.jq
+                ekala-org.packages.${system}.content-format
+                nixpkgs.legacyPackages.${system}.mystmd
+              ];
+            }
+            ''
+              # The source tree, without the emitter's output directory: it is rebuilt here.
+              cp -r ${self} src
+              chmod -R u+w src
+              cd src
+              rm -rf _build
+              bash scripts/docs-pipeline.sh --check
+              touch $out
+            '';
+      });
+
       # The author-facing shell. It carries the pinned content-format validator so a writer
       # can run `nix develop -c validate --kind docs --check` from this repository, and it
       # takes its TOOLCHAIN from this repository's own pkgs rather than from the input —
