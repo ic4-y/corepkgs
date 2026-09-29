@@ -15,6 +15,7 @@ jobs:
     # job-level env can, and an empty value simply skips the push.
     env:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      FORMAT_ARTIFACT_TOKEN: ${{ secrets.FORMAT_ARTIFACT_TOKEN }}
 
     steps:
     - uses: actions/checkout@v4
@@ -52,6 +53,7 @@ jobs:
     # job-level env can, and an empty value simply skips the push.
     env:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      FORMAT_ARTIFACT_TOKEN: ${{ secrets.FORMAT_ARTIFACT_TOKEN }}
 
     steps:
     - uses: actions/checkout@v4
@@ -89,6 +91,7 @@ jobs:
     # job-level env can, and an empty value simply skips the push.
     env:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      FORMAT_ARTIFACT_TOKEN: ${{ secrets.FORMAT_ARTIFACT_TOKEN }}
 
     steps:
     - uses: actions/checkout@v4
@@ -125,5 +128,14 @@ jobs:
         # Push only what THIS job produced. Pushing the whole closure re-uploads every
         # nixpkgs path already on cache.nixos.org, which is what makes a naive push slow.
         pushFilter: '(-source$|-docs-content-format-check$|content-format)'
+    # THE PRIVATE PINNED INPUT. The `ekala-org` flake input lives in a private repository while
+    # this fork is public, so a runner here cannot fetch it and the job fails at flake eval with
+    # `program 'git' failed with exit code 128` before the gate ever runs (drift D15). This step
+    # supplies the token when one is configured and is SKIPPED otherwise, so the failure is
+    # attributable rather than mysterious, and setting the secret is the only remaining step.
+    - name: Authenticate the pinned content-format input
+      if: ${{ env.FORMAT_ARTIFACT_TOKEN != '' }}
+      run: echo "access-tokens = github.com=$FORMAT_ARTIFACT_TOKEN" | sudo tee -a /etc/nix/nix.conf
+
     - name: Docs content gate
       run: nix build --print-out-paths .#checks.x86_64-linux.docs

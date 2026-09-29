@@ -98,3 +98,11 @@ CI pushes to it, in all three jobs, through `cachix/cachix-action` with
 `pushFilter` limited to what the jobs produce. The step is **skipped** when the
 `CACHIX_AUTH_TOKEN` secret is absent, so the workflow is green on a fork without credentials and
 begins populating the cache as soon as the secret is added.
+
+### The pinned content-format input is private
+
+The `ekala-org` flake input (the validator) lives in a private repository. A public fork's runner
+cannot fetch it, so the `docs` job fails at flake evaluation — `program 'git' failed with exit
+code 128` — before the gate runs. The `docs` job authenticates through a **`FORMAT_ARTIFACT_TOKEN`
+secret** when one is set and skips that step when it is not, so the failure is attributable. This
+is dev tooling only; it does not affect `lint` or `eval`, which pass without it.
