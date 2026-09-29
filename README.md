@@ -73,3 +73,28 @@ documentation itself.
 substituters = https://ekala-corepkgs.cachix.org
 trusted-public-keys = ekala-corepkgs.cachix.org-1:DcZV+vegWoEzacbSdXFXU4S7728C0eS9RfGpKeyHd6w=
 ```
+
+### Consuming this repository: re-declare the cache
+
+`nixConfig` is **not inherited across a flake input or an `npins` pin**, so a repository that
+consumes corepkgs does not get these substituters automatically and will build the package set
+from source instead of substituting it. Re-declare both keys in the consumer's own `flake.nix`:
+
+```nix
+nixConfig = {
+  extra-substituters = [ "https://ekala-corepkgs.cachix.org" ];
+  extra-trusted-public-keys = [ "ekala-corepkgs.cachix.org-1:DcZV+vegWoEzacbSdXFXU4S7728C0eS9RfGpKeyHd6w=" ];
+};
+```
+
+This applies to the docs tooling too, and there it is measurable rather than theoretical:
+`mystmd` is on `cache.nixos.org`, but the `content-format` validator is on **neither**
+`cache.nixos.org` nor this cache unless CI has pushed it. A consumer that pins this repository
+and does not re-declare the cache builds the validator from source on every CI run.
+
+### Populating the cache
+
+CI pushes to it, in all three jobs, through `cachix/cachix-action` with
+`pushFilter` limited to what the jobs produce. The step is **skipped** when the
+`CACHIX_AUTH_TOKEN` secret is absent, so the workflow is green on a fork without credentials and
+begins populating the cache as soon as the secret is added.

@@ -18,6 +18,24 @@ jobs:
         extra_nix_config: |
           extra-substituters = https://ekala-corepkgs.cachix.org
           extra-trusted-public-keys = ekala-corepkgs.cachix.org-1:DcZV+vegWoEzacbSdXFXU4S7728C0eS9RfGpKeyHd6w=
+    # POPULATE THE BINARY CACHE. The derivations this gate needs are not on cache.nixos.org —
+    # measured: `mystmd` is, the `content-format` validator is not, and neither is in
+    # ekala-corepkgs.cachix.org. A consumer that pins this repository (the site does, through
+    # npins) re-declares this cache in its own nixConfig precisely so it substitutes rather than
+    # builds, so what is pushed here is what makes that true.
+    #
+    # Guarded on the token: with no CACHIX_AUTH_TOKEN secret the step is SKIPPED, so the
+    # workflow is green on a fork that has no credentials, and starts populating the cache the
+    # moment the token is added. The cache name and public key are the README's and this file's
+    # own `extra-substituters`, not a second cache.
+    - uses: cachix/cachix-action@v15
+      if: ${{ secrets.CACHIX_AUTH_TOKEN != '' }}
+      with:
+        name: ekala-corepkgs
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+        # Push only what THIS job produced. Pushing the whole closure re-uploads every
+        # nixpkgs path already on cache.nixos.org, which is what makes a naive push slow.
+        pushFilter: '(-source$|-docs-content-format-check$|content-format)'
     - name: Nix Lint
       run: nix fmt . -- --ci
 
@@ -32,6 +50,24 @@ jobs:
         extra_nix_config: |
           extra-substituters = https://ekala-corepkgs.cachix.org
           extra-trusted-public-keys = ekala-corepkgs.cachix.org-1:DcZV+vegWoEzacbSdXFXU4S7728C0eS9RfGpKeyHd6w=
+    # POPULATE THE BINARY CACHE. The derivations this gate needs are not on cache.nixos.org —
+    # measured: `mystmd` is, the `content-format` validator is not, and neither is in
+    # ekala-corepkgs.cachix.org. A consumer that pins this repository (the site does, through
+    # npins) re-declares this cache in its own nixConfig precisely so it substitutes rather than
+    # builds, so what is pushed here is what makes that true.
+    #
+    # Guarded on the token: with no CACHIX_AUTH_TOKEN secret the step is SKIPPED, so the
+    # workflow is green on a fork that has no credentials, and starts populating the cache the
+    # moment the token is added. The cache name and public key are the README's and this file's
+    # own `extra-substituters`, not a second cache.
+    - uses: cachix/cachix-action@v15
+      if: ${{ secrets.CACHIX_AUTH_TOKEN != '' }}
+      with:
+        name: ekala-corepkgs
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+        # Push only what THIS job produced. Pushing the whole closure re-uploads every
+        # nixpkgs path already on cache.nixos.org, which is what makes a naive push slow.
+        pushFilter: '(-source$|-docs-content-format-check$|content-format)'
     - name: Evaluate all packages
       run: ./ci/eval.sh
 
@@ -51,8 +87,28 @@ jobs:
     # the state of a fresh clone and of this runner — a page edited without regenerating its
     # committed JSON, or a hand-edited JSON, fails HERE.
     #
-    # Invoked through the devshell, because the validator comes from the pinned flake input and
-    # the emitter from the pinned nixpkgs; neither is on the runner's PATH otherwise. This is
-    # also why `nix flake check` is not the gate: it does not run a devshell command.
+    # This builds `checks.<system>.docs`, which runs `scripts/docs-pipeline.sh --check` against
+    # a copy of the tree with the emitter and validator on PATH. It is a derivation rather than
+    # `nix develop -c ...` so the gate is hermetic and cacheable, and it is the same script the
+    # two hooks invoke — three callers, one implementation, so none of them can drift. The
+    # system is named because a flake check is system-addressed.
+    # POPULATE THE BINARY CACHE. The derivations this gate needs are not on cache.nixos.org —
+    # measured: `mystmd` is, the `content-format` validator is not, and neither is in
+    # ekala-corepkgs.cachix.org. A consumer that pins this repository (the site does, through
+    # npins) re-declares this cache in its own nixConfig precisely so it substitutes rather than
+    # builds, so what is pushed here is what makes that true.
+    #
+    # Guarded on the token: with no CACHIX_AUTH_TOKEN secret the step is SKIPPED, so the
+    # workflow is green on a fork that has no credentials, and starts populating the cache the
+    # moment the token is added. The cache name and public key are the README's and this file's
+    # own `extra-substituters`, not a second cache.
+    - uses: cachix/cachix-action@v15
+      if: ${{ secrets.CACHIX_AUTH_TOKEN != '' }}
+      with:
+        name: ekala-corepkgs
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+        # Push only what THIS job produced. Pushing the whole closure re-uploads every
+        # nixpkgs path already on cache.nixos.org, which is what makes a naive push slow.
+        pushFilter: '(-source$|-docs-content-format-check$|content-format)'
     - name: Docs content gate
-      run: nix develop .#default -c bash scripts/docs-pipeline.sh --check
+      run: nix build --print-out-paths .#checks.x86_64-linux.docs
