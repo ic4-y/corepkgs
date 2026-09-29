@@ -8,7 +8,7 @@ Upstream projects frequently switch build backends between releases.
 
 ### setuptools to hatchling
 
-```
+```console
 ERROR Backend subprocess exited when trying to invoke get_requires_for_build_wheel
 ```
 
@@ -26,7 +26,7 @@ Also update function arguments to import the new build backend and remove the ol
 
 ### setuptools-scm version pin
 
-```
+```console
 ERROR setuptools_scm._overrides:version ... is not in range ...
 ```
 
@@ -49,7 +49,7 @@ pythonRemoveDeps = [ "sphinx-notfound-page" ];
 
 ## Cython version pin
 
-```
+```console
 ERROR Cython version mismatch
 ```
 
@@ -64,7 +64,7 @@ postPatch = ''
 
 ## Missing conftest.py
 
-```
+```console
 FileNotFoundError: conftest.py
 ```
 
@@ -86,7 +86,7 @@ postInstall = ''
 
 ## Coherent-licensed and other new pyproject plugins
 
-```
+```console
 ERROR Failed to parse pyproject.toml: unknown key "coherent.licensed"
 ```
 
@@ -101,7 +101,7 @@ postPatch = ''
 
 ## Transitive dependency failures
 
-```
+```console
 error: Build failed due to failed dependency
 ```
 

@@ -4,7 +4,7 @@
 
 ### Symptom
 
-```
+```console
 error: Build failed due to failed dependency
 
 these N derivations will be built:
@@ -19,7 +19,9 @@ The key indicator is that the error message references a **different package** t
 
 ### Fix
 
-This is **not fixable** by editing the updated package's Nix file. You must:
+:::{caution} The file you are editing is not the one that is broken
+This is **not fixable** by editing the updated package's Nix file. The failing `.drv` names
+the package that actually broke, and that is the one to fix.
 
 1. Identify which dependency is actually broken from the `.drv` path in the error
 2. Fix that dependency first

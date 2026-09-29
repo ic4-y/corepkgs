@@ -6,7 +6,7 @@ Major version bumps may change default CMake install directories. Outputs end up
 
 ### Symptom
 
-```
+```console
 CMake Error at cmake_install.cmake:
   file INSTALL cannot find "/build/source/..."
 ```

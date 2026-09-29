@@ -6,7 +6,7 @@ New compiler versions or new source code may trigger warnings that are promoted 
 
 ### Symptom
 
-```
+```console
 error: format-overflow [-Werror=format-overflow]
 ```
 
@@ -29,7 +29,10 @@ env.NIX_CFLAGS_COMPILE = toString [
 ];
 ```
 
-Only suppress the specific warning, not all warnings. Never use `-Wno-error` without specifying which warning.
+:::{caution} Suppress the warning, not the warning class
+Only suppress the specific warning. `-Wno-error` on its own silences every warning in the
+build, which hides the next real one behind the one you were fixing.
+:::
 
 ## Configure flags for optional features
 

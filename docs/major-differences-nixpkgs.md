@@ -6,7 +6,7 @@ changes differ significantly from whath one would expct with Nixpkgs.
 
 ## Stdenv
 
-- See [stdenv/README.md](../stdenv/README.md)
+- The stdenv differs substantially; its own README is at `stdenv/README.md` in this repository.
 
 ## Unfree packages
 

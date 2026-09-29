@@ -6,7 +6,7 @@ After updating a Rust package's version and source hash, the `cargoHash` must al
 
 ### Symptom
 
-```
+```console
 hash mismatch in fixed-output derivation '/nix/store/...-...-vendor.tar.gz':
   specified: sha256-OLD...
   got:       sha256-NEW...
@@ -28,7 +28,7 @@ Go packages may pin a Go version in `go.mod` that's newer than what's available 
 
 ### Symptom
 
-```
+```console
 go: go.mod requires go >= 1.26.4 (running go 1.26.3)
 ```
 

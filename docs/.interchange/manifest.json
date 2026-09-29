@@ -1,0 +1,46 @@
+{
+  "docs_format": 1,
+  "parser_version": "1.9.1",
+  "pages": [
+    {
+      "slug": "common-issues",
+      "location": "/docs/common-issues/README.md",
+      "file": "common-issues.json"
+    },
+    {
+      "slug": "common-issues-cmake-packages",
+      "location": "/docs/common-issues/cmake-packages.md",
+      "file": "common-issues-cmake-packages.json"
+    },
+    {
+      "slug": "common-issues-compiler-errors",
+      "location": "/docs/common-issues/compiler-errors.md",
+      "file": "common-issues-compiler-errors.json"
+    },
+    {
+      "slug": "common-issues-dependency-failures",
+      "location": "/docs/common-issues/dependency-failures.md",
+      "file": "common-issues-dependency-failures.json"
+    },
+    {
+      "slug": "common-issues-obsolete-patches",
+      "location": "/docs/common-issues/obsolete-patches.md",
+      "file": "common-issues-obsolete-patches.json"
+    },
+    {
+      "slug": "common-issues-python-packages",
+      "location": "/docs/common-issues/python-packages.md",
+      "file": "common-issues-python-packages.json"
+    },
+    {
+      "slug": "common-issues-rust-packages",
+      "location": "/docs/common-issues/rust-packages.md",
+      "file": "common-issues-rust-packages.json"
+    },
+    {
+      "slug": "major-differences-nixpkgs",
+      "location": "/docs/major-differences-nixpkgs.md",
+      "file": "major-differences-nixpkgs.json"
+    }
+  ]
+}
