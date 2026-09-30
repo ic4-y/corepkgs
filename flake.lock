@@ -2,11 +2,11 @@
   "nodes": {
     "ekala-org": {
       "locked": {
-        "lastModified": 1790698316,
-        "narHash": "sha256-N7BIG1Q8S4G6g+MksfIkpF56DCzhEo1pkRw0ysL+3tc=",
+        "lastModified": 1790774405,
+        "narHash": "sha256-dsbTL6xRMlDwvlawkVG+IFksUbSYc1WFunAB5REV+n8=",
         "ref": "refs/heads/node/format-artifact",
-        "rev": "d7625e54c99fca55239e52c84cd268b905f370ff",
-        "revCount": 129,
+        "rev": "ab7f5e45d82aa0e06c50217b36db099413e770ec",
+        "revCount": 130,
         "type": "git",
         "url": "https://github.com/ekala-project/ekala-org"
       },
