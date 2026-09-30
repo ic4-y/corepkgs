@@ -94,10 +94,14 @@ and does not re-declare the cache builds the validator from source on every CI r
 
 ### Populating the cache
 
-CI pushes to it, in all three jobs, through `cachix/cachix-action` with
-`pushFilter` limited to what the jobs produce. The step is **skipped** when the
-`CACHIX_AUTH_TOKEN` secret is absent, so the workflow is green on a fork without credentials and
-begins populating the cache as soon as the secret is added.
+**Nothing populates it from this repository yet.** A `cachix-action` push was written for all three
+CI jobs and removed, because the `CACHIX_AUTH_TOKEN` is not available; the steps were skipped on
+every run, so they only documented an intent.
+
+What that costs, measured: `mystmd` substitutes from `cache.nixos.org` regardless, but the
+`content-format` validator is on neither that cache nor this one, so a consumer pinning this
+repository builds it from source on every CI run. Adding the token to the three jobs (the shape is
+in this file's history) is what closes that.
 
 ### The pinned content-format input is private
 
