@@ -1,139 +1,32 @@
 # Using corepkgs
 
-:::{note} Most users want ekapkgs, not corepkgs
-corepkgs is the **base layer**: the stdenv, the compilers, the language ecosystems,
-and the module-system behaviour that other package sets build on. It deliberately
-carries no desktop applications, no end-user tooling and no distribution
-opinions.
-
-If you want to install software or build a system, use **ekapkgs**, which
-re-exports corepkgs and adds the rest. Reach for corepkgs directly when you are
-building the layer underneath — a package set of your own, a cross-compilation
-target, or something that has to sit below ekapkgs.
-
-A useful test: if you would not be surprised to find the thing in
-`nixpkgs/pkgs/stdenv/`, it belongs here.
+:::{note} Most users want ekapkgs
+corepkgs is the **base layer** other package sets build on. Use **ekapkgs**
+unless you are building that layer itself.
 :::
 
-Everything below assumes a `x86_64-linux` machine. Substitute your own system
-where it appears.
+Three ways to consume corepkgs. Each shows the same two things — a development
+shell and a package — so you can compare them rather than take one on faith.
 
-## Declare the binary cache, or build a compiler
-
-**Do this first. It is the difference between a two-second build and twenty
-minutes.**
-
-`nixConfig` is **not inherited** across a flake input or an `npins` pin. A
-consumer that does not re-declare corepkgs' cache will bootstrap GCC from source
-to build anything at all.
-
-```nix
-nixConfig = {
-  extra-substituters = [ "https://ekala-corepkgs.cachix.org" ];
-  extra-trusted-public-keys = [
-    "ekala-corepkgs.cachix.org-1:DcZV+vegWoEzacbSdXFXU4S7728C0eS9RfGpKeyHd6w="
-  ];
-};
-```
-
-Measured on the examples below, building the same `hello` package:
-
-| Cache declared | Result |
+| Route | Use it when |
 | --- | --- |
-| no | the stdenv, GCC and glibc all compile from source; the build was still going at **13 minutes** |
-| yes | the stdenv substitutes and the package builds in **2.9 seconds** |
+| [A flake input](#with-a-flake-input) | Your project already uses flakes. |
+| [npins, no flakes](#with-npins-and-no-flakes) | Your project uses plain Nix files. |
+| [An inputless flake](#an-inputless-flake) | You want `nix develop`, but no flake inputs to resolve. |
 
-The cache is a personal server and should be treated as untrusted.
+Pick the one that fits. They are not a progression to work through.
 
-**It is not complete, and you will notice.** A build with the cache declared
-still compiled `pkg-config` and `glibc` when the cache lacked them, so declaring
-it turns "always build everything" into "build whatever is missing" rather than
-into "never build anything". That is still the difference that matters.
+## With a flake input
 
-## A flake with corepkgs as an input
+The shortest route, if your project already uses flakes. `corepkgs.lib.mkFlake`
+builds the output structure, so your `flake.nix` states only what you add.
 
-`corepkgs.lib.mkFlake` builds the output structure for you — `packages`,
-`devShells`, `checks` and the rest — so a consumer flake states only what it
-adds.
+`flake.nix`:
 
 ```nix
 {
   inputs.corepkgs.url = "github:ekala-project/corepkgs";
 
-  outputs =
-    { corepkgs, ... }:
-    corepkgs.lib.mkFlake {
-      packages =
-        pkgs:
-        rec {
-          hello = pkgs.stdenv.mkDerivation {
-            pname = "hello";
-            version = "1.0";
-            src = pkgs.writeText "hello.c" ''
-              #include <stdio.h>
-              int main(void) { printf("hello from corepkgs\n"); return 0; }
-            '';
-            dontUnpack = true;
-            buildPhase = "$CC -o hello $src";
-            installPhase = "mkdir -p $out/bin && cp hello $out/bin/";
-          };
-        };
-
-      devShells =
-        pkgs:
-        {
-          default = pkgs.mkShell {
-            packages = [ pkgs.gcc pkgs.gnumake ];
-          };
-        };
-    };
-}
-```
-
-```console
-$ nix build .#hello
-$ ./result/bin/hello
-hello from corepkgs
-```
-
-:::{caution} The facade lives at `lib.mkFlake`, not at the flake root
-`mk-flake.nix`'s own header shows `core-pkgs.mkFlake { ... }`. That form fails
-with `attribute 'mkFlake' missing` — the function is exposed on the `lib` output
-(`flake.nix`: `lib = nix-lib // { mkFlake = ...; }`). Measured.
-:::
-
-`mkFlake` takes `config`, `overlays`, `modules` and `systems` alongside the
-output functions, so a consumer can extend the package set without abandoning the
-facade:
-
-```nix
-corepkgs.lib.mkFlake {
-  overlays = [ (final: prev: { myThing = final.callPackage ./my-thing.nix { }; }) ];
-  packages = pkgs: { inherit (pkgs) myThing; };
-}
-```
-
-:::{caution} `mkShell` is not in corepkgs
-`pkgs.mkShell` — the shell constructor nixpkgs users reach for — **does not
-exist** here. Measured: evaluating `pkgs ? mkShell` against corepkgs returns
-`false`, while `pkgs ? mkDevShell` returns `true`. The two are not
-interchangeable: `mkDevShell` takes the same `packages` list and adds the
-services layer below.
-:::
-
-## A development shell
-
-`pkgs.mkDevShell` is corepkgs' own shell constructor, and the only one — there is
-no `mkShell`. It takes a `packages` list like nixpkgs' does, and adds a services
-layer on top: a shell can declare processes that start with it, rather than a
-`shellHook` that backgrounds them and a comment asking you to remember to kill
-them.
-
-```nix
-{
-  inputs.corepkgs.url = "github:ekala-project/corepkgs";
-
-  # Without this, entering the shell builds a compiler first. See above.
   nixConfig = {
     extra-substituters = [ "https://ekala-corepkgs.cachix.org" ];
     extra-trusted-public-keys = [
@@ -144,47 +37,134 @@ them.
   outputs =
     { corepkgs, ... }:
     corepkgs.lib.mkFlake {
-      devShells =
-        pkgs:
-        {
-          default = pkgs.mkDevShell {
-            packages = [ pkgs.gcc pkgs.gnumake ];
+      packages = pkgs: {
+        hello = pkgs.callPackage ./pkgs/hello { };
+      };
 
-            services.http-server = {
-              enable = true;
-              command = "${pkgs.python3}/bin/python3";
-              args = [ "-m" "http.server" "8080" ];
-              restartPolicy = "always";
-            };
-          };
+      devShells = pkgs: {
+        default = pkgs.mkDevShell {
+          packages = [ pkgs.gcc pkgs.gnumake ];
         };
+      };
     };
 }
 ```
 
-```console
-$ nix develop
-$ curl -s localhost:8080 | head -1
+`pkgs/hello/default.nix` — a package lives in its own file, and `callPackage`
+supplies `lib` and `stdenv` from the set, so the file declares only what it uses:
+
+```nix
+{ lib, stdenv }:
+
+stdenv.mkDerivation {
+  pname = "hello";
+  version = "1.0";
+  src = ./hello.c;
+  dontUnpack = true;
+  buildPhase = "$CC -o hello $src";
+  installPhase = "mkdir -p $out/bin && cp hello $out/bin/";
+}
 ```
 
-The server is up for as long as the shell is, and its lifetime is the shell's
-rather than a stray process you have to find later.
+`pkgs/hello/hello.c`, beside it:
 
-## Without flakes: `npins` and an inputless flake
+```c
+#include <stdio.h>
 
-A flake with no inputs still needs `nix develop` and `nix build`, and `npins`
-gives it a pinned corepkgs without a `flake.lock` or a registry lookup.
+int main(void) {
+  printf("hello from corepkgs\n");
+  return 0;
+}
+```
+
+```console
+$ nix build .#hello
+$ ./result/bin/hello
+hello from corepkgs
+$ nix develop
+```
+
+:::{caution} The facade lives at `lib.mkFlake`
+`mk-flake.nix`'s own header shows `core-pkgs.mkFlake { … }`. That form fails with
+`attribute 'mkFlake' missing` — it is exposed on the `lib` output.
+:::
+
+## With npins, and no flakes
+
+No flakes, no `flake.lock`, nothing to resolve — `npins` pins corepkgs and the
+files below are plain Nix. This is the route for a repository that does not use
+flakes at all.
 
 ```console
 $ nix run nixpkgs#npins -- -d npins init
 $ nix run nixpkgs#npins -- -d npins add github ekala-project corepkgs --name corepkgs
 ```
 
+`default.nix`:
+
+```nix
+let
+  sources = import ./npins;
+  pkgs = import sources.corepkgs { system = builtins.currentSystem; };
+in
+{
+  hello = pkgs.callPackage ./pkgs/hello { };
+}
+```
+
+`shell.nix`:
+
+```nix
+let
+  sources = import ./npins;
+  pkgs = import sources.corepkgs { system = builtins.currentSystem; };
+in
+pkgs.mkDevShell {
+  packages = [ pkgs.gcc pkgs.gnumake ];
+}
+```
+
+`pkgs/hello/default.nix` and `pkgs/hello/hello.c` are unchanged from above — the
+same package file works under every route, because `callPackage` is doing the
+same job in each.
+
+```console
+$ nix-build -A hello
+$ ./result/bin/hello
+hello from corepkgs
+$ nix-shell
+```
+
+:::{caution} `mkShell` is not in corepkgs
+`pkgs.mkShell` — the constructor nixpkgs users reach for — does not exist here.
+Measured: `pkgs ? mkShell` is `false` while `pkgs ? mkDevShell` is `true`.
+:::
+
+## An inputless flake
+
+The flake CLI, without flake inputs. `nix develop`, `nix build` and `nix flake
+show` all work as usual, and nothing is resolved: `npins` pins corepkgs, and the
+flake reads that pin.
+
+**What you stop evaluating.** A flake input drags in corepkgs' own inputs. This
+consumer's lock carries **8 nodes** — `corepkgs`, plus `nix-lib`, `treefmt-nix`,
+`systems`, `nixpkgs` twice and `ekala-org` — none of which a consumer of the
+package set has any use for. They are there because corepkgs' `flake.nix` needs
+them to build its own tooling. The inputless form evaluates `default.nix` instead
+and resolves **none**: measured, `npins` fetches a tarball and the pin is
+`import`ed, so the flake's inputs are not part of the evaluation at all.
+
+That is the trade: you keep the flake CLI, and you give up flake inputs. A
+repository whose only input is a package set loses nothing by doing so.
+
+**What it costs you.** `nix flake update` no longer moves corepkgs — `npins
+update` does — so a project that expects one command to refresh everything now
+has two.
+
+`flake.nix`:
+
 ```nix
 {
-  # NO inputs, and no flake.lock to go with them.
-  description = "A flake pinned with npins";
-
   outputs =
     { self }:
     let
@@ -199,16 +179,18 @@ $ nix run nixpkgs#npins -- -d npins add github ekala-project corepkgs --name cor
           pkgs = corepkgs { inherit system; };
         in
         {
-          hello = pkgs.stdenv.mkDerivation {
-            pname = "hello";
-            version = "1.0";
-            src = pkgs.writeText "hello.c" ''
-              #include <stdio.h>
-              int main(void) { printf("hello from corepkgs\n"); return 0; }
-            '';
-            dontUnpack = true;
-            buildPhase = "$CC -o hello $src";
-            installPhase = "mkdir -p $out/bin && cp hello $out/bin/";
+          hello = pkgs.callPackage ./pkgs/hello { };
+        }
+      );
+
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = corepkgs { inherit system; };
+        in
+        {
+          default = pkgs.mkDevShell {
+            packages = [ pkgs.gcc pkgs.gnumake ];
           };
         }
       );
@@ -216,65 +198,42 @@ $ nix run nixpkgs#npins -- -d npins add github ekala-project corepkgs --name cor
 }
 ```
 
-`import sources.corepkgs` resolves to a **functor** — a function taking
-`{ system }` — which is why it is called with one rather than applied directly.
-Measured: `import ./npins/corepkgs.nix` does not exist under current `npins`;
-the pins are read through `import ./npins`, and each name resolves to its
-fetcher.
+```console
+$ nix build .#hello
+$ nix develop
+```
 
-The `nixConfig` block above still applies, and matters more here: a flake input
-at least carries its own `nixConfig` to a reader, while a pin carries nothing.
+:::{caution} The pin is a functor
+`import sources.corepkgs` resolves to a function taking `{ system }`, not to a
+package set — so it must be CALLED with one. Measured.
+:::
 
-## Without flakes at all
+## Declare the binary cache first
 
-`npins` reads fine outside a flake, because `default.nix` is an ordinary file.
+:::{caution} Without this, you build a compiler
+`nixConfig` is **not inherited** across a flake input or a pin. The same `hello`
+package took **13+ minutes and was still building** without the cache, and
+**2.9 seconds** with it.
+:::
 
 ```nix
-# default.nix
-let
-  sources = import ./npins;
-  pkgs = import sources.corepkgs { system = builtins.currentSystem; };
-in
-pkgs.stdenv.mkDerivation {
-  pname = "hello";
-  version = "1.0";
-  src = pkgs.writeText "hello.c" ''
-    #include <stdio.h>
-    int main(void) { printf("hello from corepkgs\n"); return 0; }
-  '';
-  dontUnpack = true;
-  buildPhase = "$CC -o hello $src";
-  installPhase = "mkdir -p $out/bin && cp hello $out/bin/";
-}
+nixConfig = {
+  extra-substituters = [ "https://ekala-corepkgs.cachix.org" ];
+  extra-trusted-public-keys = [
+    "ekala-corepkgs.cachix.org-1:DcZV+vegWoEzacbSdXFXU4S7728C0eS9RfGpKeyHd6w="
+  ];
+};
 ```
+
+A no-flake project declares the same two values with `--option` on each command,
+or in `nix.conf`:
 
 ```console
-$ nix-build
-$ ./result/bin/hello
-hello from corepkgs
+$ nix-build --option substituters https://ekala-corepkgs.cachix.org \
+            --option trusted-public-keys "ekala-corepkgs.cachix.org-1:DcZV+vegWoEzacbSdXFXU4S7728C0eS9RfGpKeyHd6w="
 ```
 
-```nix
-# shell.nix — the same pin, opened as a shell
-let
-  sources = import ./npins;
-  pkgs = import sources.corepkgs { system = builtins.currentSystem; };
-in
-pkgs.mkDevShell {
-  packages = [ pkgs.gcc pkgs.gnumake ];
-}
-```
-
-```console
-$ nix-shell
-```
-
-`nix-build` and `nix repl` carry over from nixpkgs because corepkgs' `default.nix`
-takes a plain `system` the same way nixpkgs' does — measured: the `default.nix`
-above builds and runs.
-
-`nix-shell` is the one to be careful with. `mkDevShell` composes the services
-layer, which expects a dev-shell lifecycle; under a plain `nix-shell` the
-services machinery may not reach a state where the shell is handed over. Use
-`nix develop` where you can, and keep a `shell.nix` to `pkgs.mkDevShell` only if
-you have measured that it enters on your machine.
+The cache is a personal server and should be treated as untrusted. It is also
+**incomplete** — a build with it declared still compiled `pkg-config` and `glibc`
+when the cache lacked them — so declaring it means "build only what is missing"
+rather than "build nothing".

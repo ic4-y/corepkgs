@@ -1,8 +1,9 @@
 # Introduction
 
 corepkgs is the package set behind Ekala: the common development concerns a
-nixpkgs fork needs, kept **deliberately narrower than nixpkgs itself**. It
-supplies the stdenv, the compilers and interpreters, the language ecosystems,
+nixpkgs fork needs, kept **deliberately narrower than nixpkgs itself**.
+
+It supplies the stdenv, the compilers and interpreters, the language ecosystems,
 and the module-system behaviour that everything else builds on.
 
 The narrower scope is the point. A smaller surface means updates land more often
@@ -24,15 +25,6 @@ build, or deciding whether a change belongs here — read [Stdenv](../stdenv/REA
 first, then [Building Packages](../building-packages/README.md). The stdenv page
 comes first because two of its defaults cause failures that look like something
 else entirely.
-
-## How this repository is organised
-
-A package lives where its attribute path says it does. `pkgs.vim` is at
-`pkgs/vim`, and `python3.pkgs.requests` is at `python/pkgs/requests`.
-
-**A file's location is its identity.** A package is found by reading its path
-rather than by searching for it, so where you put a new package is a decision,
-not a detail.
 
 ## Guiding principles
 
