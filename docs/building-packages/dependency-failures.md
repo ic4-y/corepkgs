@@ -18,9 +18,10 @@ that actually broke.
 
 ## The fix
 
-:::{caution} The file you are editing is not the one that is broken
-Editing the updated package's Nix file cannot fix this. The `.drv` path in the
-error names the package that broke, and that is the one to repair.
+:::{caution}
+**The file you are editing is not the one that is broken.** The `.drv` path in
+the error names the package that broke, and that is the one to repair — editing
+the package you were updating cannot fix it.
 :::
 
 Repair the broken dependency, then retry the original update.

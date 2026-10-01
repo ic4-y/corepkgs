@@ -52,10 +52,10 @@ A multi-hunk patch can apply half its hunks and fail the rest, and the build may
 carry on with a HALF-patched tree. That is worse than a patch that fails
 outright, because the failure is silent.
 
-:::{caution} A partially-applied patch is worse than one that fails outright
-Regenerate the patch against the current source, or split it into the hunks that
-still apply. If upstream already fixed the problem, remove the whole patch
-instead.
+:::{caution}
+**A partially-applied patch is worse than one that fails outright.** Regenerate
+it against the current source, or split it into the hunks that still apply. If
+upstream already fixed the problem, remove the whole patch instead.
 :::
 
 ## Patches that are not in the package file

@@ -24,10 +24,10 @@ env.NIX_CFLAGS_COMPILE = toString [
 ];
 ```
 
-:::{caution} Suppress the warning, not the warning class
-Name the warning you are silencing. A bare `-Wno-error` turns every warning in the
-build back into a warning, which hides the next real one behind the one you were
-fixing.
+:::{caution}
+**Suppress the warning, not the warning class.** A bare `-Wno-error` turns every
+warning in the build back into a warning, which hides the next real one behind
+the one you were fixing. Name the warning you are silencing.
 :::
 
 ## An optional feature that stopped being detected

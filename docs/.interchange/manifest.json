@@ -18,6 +18,26 @@
       "file": "using-corepkgs.json"
     },
     {
+      "slug": "using-corepkgs-flake-input",
+      "location": "/docs/using-corepkgs/flake-input.md",
+      "file": "using-corepkgs-flake-input.json"
+    },
+    {
+      "slug": "using-corepkgs-npins",
+      "location": "/docs/using-corepkgs/npins.md",
+      "file": "using-corepkgs-npins.json"
+    },
+    {
+      "slug": "using-corepkgs-inputless-flake",
+      "location": "/docs/using-corepkgs/inputless-flake.md",
+      "file": "using-corepkgs-inputless-flake.json"
+    },
+    {
+      "slug": "using-corepkgs-binary-cache",
+      "location": "/docs/using-corepkgs/binary-cache.md",
+      "file": "using-corepkgs-binary-cache.json"
+    },
+    {
       "slug": "stdenv",
       "location": "/docs/stdenv/README.md",
       "file": "stdenv.json"
