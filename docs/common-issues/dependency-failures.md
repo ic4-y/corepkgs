@@ -1,8 +1,9 @@
 # Dependency Failures
 
-## Transitive dependency failure
+The package you are updating builds fine on its own, but something it depends on
+does not.
 
-### Symptom
+## What it looks like
 
 ```console
 error: Build failed due to failed dependency
@@ -11,30 +12,29 @@ these N derivations will be built:
   /nix/store/...-some-other-package.drv
 ```
 
-The package you're updating builds fine on its own, but one of its dependencies (or a dependency's dependency) fails to build.
+The telling detail is that the error names a **different package** than the one
+you set out to update. The failing derivation path in that output is the package
+that actually broke.
 
-### Diagnosis
-
-The key indicator is that the error message references a **different package** than the one being updated. The failing derivation path will show the actual broken package.
-
-### Fix
+## The fix
 
 :::{caution} The file you are editing is not the one that is broken
-This is **not fixable** by editing the updated package's Nix file. The failing `.drv` names
-the package that actually broke, and that is the one to fix.
+Editing the updated package's Nix file cannot fix this. The `.drv` path in the
+error names the package that broke, and that is the one to repair.
+:::
 
-1. Identify which dependency is actually broken from the `.drv` path in the error
-2. Fix that dependency first
-3. Retry the original update
+Repair the broken dependency, then retry the original update.
 
-### Common causes
+## Why it happens
 
-- A shared dependency (e.g., a Python build tool) was recently updated and broke
-- The new version of the package added a dependency that doesn't build in core-pkgs
-- A circular dependency was introduced
+A shared dependency was recently updated and broke under it. Or the new version
+added a dependency that does not build in corepkgs. Or a circular dependency was
+introduced between two packages that previously did not reference each other.
 
-### What NOT to do
+## What not to do
 
-- Don't add `--impure` flags or skip sandbox checks
-- Don't remove the dependency from `buildInputs` — it's needed
-- Don't try to patch the dependent package from within the current package's derivation
+Reach for `--impure`, or skip the sandbox: the failure is a real build failure and
+neither changes it. Remove the dependency from `buildInputs`: it is needed, and
+removing it moves the failure rather than fixing it. Patch the dependent package
+from inside the package you were updating: the fix belongs in the package that
+broke.

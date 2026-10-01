@@ -1,14 +1,15 @@
 # Obsolete Patches
 
-The most common build failure after a version bump. Patches applied via `fetchpatch` or `fetchurl` become obsolete when upstream incorporates the fix.
+Patches applied with `fetchpatch` or `fetchurl` record a fix upstream had not
+made yet. When upstream lands that fix itself, the patch becomes obsolete, and it
+is the most common failure after a version bump.
 
-:::{note} Check this first after a bump
-This is the failure to rule out before reading anything else in this directory: a patch that
-applied cleanly last release can reverse or fail the moment upstream lands the same fix.
+A patch that applied cleanly last release can reverse or fail the moment upstream
+incorporates it. Rule this out before reading anything else in this directory.
 
-## Symptoms
+## What it looks like
 
-### Reversed patch (already applied upstream)
+A patch that upstream has already applied:
 
 ```console
 Reversed (or previously applied) patch detected!  Assume -R? [n]
@@ -17,7 +18,7 @@ Skipping patch.
 1 out of 1 hunk ignored
 ```
 
-### Patch no longer applies (context changed)
+A patch whose surrounding context moved:
 
 ```console
 applying patch /nix/store/...-fix-something.patch
@@ -26,55 +27,40 @@ Hunk #1 FAILED at 25.
 1 out of 1 hunk FAILED -- saving rejects to file src/foo.c.rej
 ```
 
-## Fix
+## The fix
 
-Remove the obsolete patch from the `patches` list. Also remove the corresponding `fetchpatch`/`fetchurl` call and any now-unused function arguments.
-
-### Before
-
-```nix
-{
-  lib,
-  stdenv,
-  fetchFromGitHub,
-  fetchpatch,  # <-- remove if no longer used
-}:
-
-stdenv.mkDerivation {
-  # ...
-  patches = [
-    (fetchpatch {
-      name = "fix-something.patch";
-      url = "https://github.com/owner/repo/commit/abc123.patch";
-      hash = "sha256-...";
-    })
-  ];
-};
-```
-
-### After
+Remove the patch from the `patches` list, and remove the `fetchpatch` or
+`fetchurl` call that fetched it. Any function argument that only existed to fetch
+that patch comes out too.
 
 ```nix
 {
   lib,
   stdenv,
   fetchFromGitHub,
-  # fetchpatch removed — no longer needed
+  # fetchpatch removed — nothing fetched it any more
 }:
 
 stdenv.mkDerivation {
   # ...
-  # patches list removed entirely, or other patches kept
-};
+}
 ```
 
-## Partial patch failure
+## When only some hunks fail
+
+A multi-hunk patch can apply half its hunks and fail the rest, and the build may
+carry on with a HALF-patched tree. That is worse than a patch that fails
+outright, because the failure is silent.
 
 :::{caution} A partially-applied patch is worse than one that fails outright
-When a multi-hunk patch has some hunks that apply and some that fail, the build may proceed
-with a HALF-patched tree. Regenerate the patch against the new source version, or split it
-into the hunks that are still relevant. If upstream already fixed it, remove the whole patch.
+Regenerate the patch against the current source, or split it into the hunks that
+still apply. If upstream already fixed the problem, remove the whole patch
+instead.
+:::
 
-## Patches defined outside the package file
+## Patches that are not in the package file
 
-Some packages inherit patches from a shared expression (e.g., LLVM packages, elogind). In these cases, the patch may not appear in the package's own `patches = [...]` list. Check parent expressions or `generic.nix` files for the patch definitions.
+Some packages inherit patches from a shared expression — LLVM and elogind both do
+this. The patch is then absent from the package's own `patches = [...]` list, and
+the failure points at a file you were not editing. Look at the parent expressions
+and the `generic.nix` files for those definitions.

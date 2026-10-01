@@ -1,18 +1,19 @@
 # Python Package Build Issues
 
-Python packages fail for several distinct reasons after version bumps. The fix depends on the failure mode.
+Python packages fail for several distinct reasons after a version bump, and the
+fix depends on which one you have.
 
-## Build system changes
+## The build backend changed
 
-Upstream projects frequently switch build backends between releases.
-
-### setuptools to hatchling
+Projects switch backends between releases, most often from `setuptools` to
+`hatchling`, or the reverse.
 
 ```console
 ERROR Backend subprocess exited when trying to invoke get_requires_for_build_wheel
 ```
 
-The package switched from `setuptools` to `hatchling` (or vice versa). Update `build-system`:
+Update `build-system` to match, and change the function arguments to import the
+new backend and drop the old one:
 
 ```nix
 # Before
@@ -22,15 +23,16 @@ build-system = [ setuptools setuptools-scm ];
 build-system = [ hatchling hatch-vcs ];
 ```
 
-Also update function arguments to import the new build backend and remove the old one.
+## A version pin is narrower than what corepkgs has
 
-### setuptools-scm version pin
+`pyproject.toml` may pin a version range that the package in corepkgs falls
+outside of.
 
 ```console
 ERROR setuptools_scm._overrides:version ... is not in range ...
 ```
 
-The `pyproject.toml` may pin a `setuptools-scm` version range incompatible with what's in core-pkgs. Patch it out:
+Relax the pin in the build:
 
 ```nix
 postPatch = ''
@@ -39,21 +41,22 @@ postPatch = ''
 '';
 ```
 
-### Unwanted build dependencies
+## An optional dependency is unavailable
 
-When a new version adds an optional dependency that isn't available, use `pythonRemoveDeps`:
+A new version can add an optional dependency that corepkgs does not carry. When
+it is not needed for the package to work, drop it:
 
 ```nix
 pythonRemoveDeps = [ "sphinx-notfound-page" ];
 ```
 
-## Cython version pin
+## Cython is pinned too narrowly
 
 ```console
 ERROR Cython version mismatch
 ```
 
-Upstream may pin a Cython minimum version. Relax the pin:
+The same shape as the `setuptools-scm` pin above:
 
 ```nix
 postPatch = ''
@@ -62,13 +65,14 @@ postPatch = ''
 '';
 ```
 
-## Missing conftest.py
+## Test files moved or disappeared
 
 ```console
 FileNotFoundError: conftest.py
 ```
 
-Upstream may have removed or restructured test files. Update `postInstall` to only copy files that still exist:
+Upstream restructured its tests, and an install step that copies them now copies
+a path that is gone. Copy only what still exists:
 
 ```nix
 # Before
@@ -84,13 +88,13 @@ postInstall = ''
 '';
 ```
 
-## Coherent-licensed and other new pyproject plugins
+## pyproject.toml carries an unknown key
 
 ```console
 ERROR Failed to parse pyproject.toml: unknown key "coherent.licensed"
 ```
 
-Remove the reference with `substituteInPlace`:
+New plugin keys appear faster than they land in corepkgs. Remove the reference:
 
 ```nix
 postPatch = ''
@@ -99,10 +103,12 @@ postPatch = ''
 '';
 ```
 
-## Transitive dependency failures
+## A Python dependency fails, not the package
 
 ```console
 error: Build failed due to failed dependency
 ```
 
-The package itself builds fine, but one of its Python dependencies fails. This is **not fixable** in the failing package's Nix file. Fix the broken dependency first, then retry.
+The package builds, but one of its Python dependencies does not. This is not
+fixable in the failing package's own file — see [Dependency
+Failures](dependency-failures.md), which is where that failure mode is covered.

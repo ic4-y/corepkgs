@@ -1,21 +1,19 @@
-# CMake Package Build Issues
+# CMake Packages
 
-## Install path issues
+A major version bump can change where CMake installs things, or rename the options
+that control it.
 
-Major version bumps may change default CMake install directories. Outputs end up in unexpected locations, or files are installed to `$out/usr/lib` instead of `$out/lib`.
+## Install paths go wrong
 
-### Symptom
+Outputs end up somewhere unexpected, or under `$out/usr/lib` instead of `$out/lib`.
 
 ```console
 CMake Error at cmake_install.cmake:
   file INSTALL cannot find "/build/source/..."
 ```
 
-Or the package builds but outputs are empty or misplaced.
-
-### Fix
-
-Add explicit install directory flags:
+Or the build succeeds and the outputs are empty. Either way, set the install
+directories explicitly:
 
 ```nix
 cmakeFlags = [
@@ -24,7 +22,7 @@ cmakeFlags = [
 ];
 ```
 
-For packages that already have `cmakeFlags`, append to the existing list:
+Where `cmakeFlags` is already in use, append rather than replace:
 
 ```nix
 cmakeFlags = [
@@ -34,9 +32,10 @@ cmakeFlags = [
 ];
 ```
 
-## Testing flags
+## Another package needs your test infrastructure
 
-Some packages need testing explicitly enabled to build test infrastructure that other packages depend on:
+Some packages build test infrastructure that other packages depend on, and it
+only exists when testing is enabled:
 
 ```nix
 cmakeFlags = [
@@ -44,10 +43,9 @@ cmakeFlags = [
 ];
 ```
 
-## Feature flags changed between versions
+## An option was renamed between versions
 
-Major version bumps may rename or remove CMake options. Check the upstream `CMakeLists.txt` for the current option names. Common renames:
-
-- `BUILD_SHARED_LIBS` stays stable
-- `ENABLE_*` vs `WITH_*` vs `*_SUPPORT` varies by project
-- `CMAKE_INSTALL_*DIR` variables follow GNUInstallDirs conventions
+Check the upstream `CMakeLists.txt` for the current names. `BUILD_SHARED_LIBS`
+has stayed stable, but `ENABLE_*`, `WITH_*` and `*_SUPPORT` vary by project, and
+the `CMAKE_INSTALL_*DIR` variables follow the GNUInstallDirs conventions rather
+than each project's own.

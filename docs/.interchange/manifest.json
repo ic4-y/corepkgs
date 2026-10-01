@@ -38,9 +38,14 @@
       "file": "common-issues-rust-packages.json"
     },
     {
-      "slug": "major-differences-nixpkgs",
-      "location": "/docs/major-differences-nixpkgs.md",
-      "file": "major-differences-nixpkgs.json"
+      "slug": "corepkgs-vs-nixpkgs",
+      "location": "/docs/corepkgs-vs-nixpkgs.md",
+      "file": "corepkgs-vs-nixpkgs.json"
+    },
+    {
+      "slug": "index",
+      "location": "/docs/index.md",
+      "file": "index.json"
     }
   ]
 }

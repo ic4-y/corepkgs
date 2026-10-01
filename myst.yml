@@ -5,8 +5,15 @@ project:
   # markdown file in the repository — 33 of them — and 20 share the basename README.md, so
   # they collide into readme.json plus readme-1..19.json. A page's identity must come from
   # where it lives, not from its filename.
+  #
+  # THE FIRST ENTRY IS A FILE, which MyST requires — and that file is the Introduction, so the
+  # page a reader lands on when they click the product tab is the same page the rail's first
+  # group starts with. The group that follows holds the rest of the orientation reading.
   toc:
-    - file: docs/major-differences-nixpkgs.md
+    - file: docs/index.md
+    - title: Introduction
+      children:
+        - file: docs/corepkgs-vs-nixpkgs.md
     - title: Common Issues
       children:
         - file: docs/common-issues/README.md

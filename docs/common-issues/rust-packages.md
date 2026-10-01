@@ -1,10 +1,12 @@
-# Rust and Go Package Build Issues
+# Rust and Go Packages
 
-## Rust: cargoHash mismatch
+Both ecosystems vendor their dependencies and record the result as a hash, so a
+version bump changes that hash in a way that has nothing to do with your change.
 
-After updating a Rust package's version and source hash, the `cargoHash` must also be updated since the `Cargo.lock` file changes.
+## Rust: the cargoHash no longer matches
 
-### Symptom
+Updating a Rust package's version and source hash leaves `cargoHash` stale,
+because `Cargo.lock` moved with the source.
 
 ```console
 hash mismatch in fixed-output derivation '/nix/store/...-...-vendor.tar.gz':
@@ -12,29 +14,22 @@ hash mismatch in fixed-output derivation '/nix/store/...-...-vendor.tar.gz':
   got:       sha256-NEW...
 ```
 
-### Fix
-
-Replace the old `cargoHash` with the correct one from the error message:
+Replace the old hash with the one the error reports:
 
 ```nix
 cargoHash = "sha256-NEW...";
 ```
 
-If the updater tool handles this automatically but fails, the error output will contain the correct hash.
+Where the updater normally handles this and failed, the correct hash is in its
+output.
 
-## Go: version pin in go.mod
-
-Go packages may pin a Go version in `go.mod` that's newer than what's available in core-pkgs.
-
-### Symptom
+## Go: go.mod requires a newer Go than is available
 
 ```console
 go: go.mod requires go >= 1.26.4 (running go 1.26.3)
 ```
 
-### Fix
-
-Patch the `go.mod` to accept the available Go version:
+Either relax the requirement:
 
 ```nix
 postPatch = ''
@@ -42,16 +37,12 @@ postPatch = ''
 '';
 ```
 
-Or switch to a pinned Go builder if one is available:
+Or build with a Go that satisfies it:
 
 ```nix
-# Before
-buildGoModule
-
-# After — use a specific Go version
-buildGo126Module
+# buildGoModule -> buildGo126Module
 ```
 
-## Go: vendorHash mismatch
+## Go: the vendorHash no longer matches
 
-Same pattern as `cargoHash` — after version bump, `vendorHash` needs updating. Replace with the hash from the error message.
+The same shape as `cargoHash`. Replace it with the hash from the error.
