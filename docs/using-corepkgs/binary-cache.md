@@ -1,4 +1,4 @@
-# Declare the binary cache first
+# Binary cache
 
 :::{caution}
 `nixConfig` is **not inherited** across a flake input or a pin. The same `hello`

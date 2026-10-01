@@ -10,9 +10,9 @@ shell and a package — so you can compare them rather than take one on faith.
 
 | Route | Use it when |
 | --- | --- |
-| [A flake input](flake-input.md) | Your project already uses flakes. |
-| [npins, no flakes](npins.md) | Your project uses plain Nix files. |
-| [An inputless flake](inputless-flake.md) | You want `nix develop`, but no flake inputs to resolve. |
+| [Flakes](flake-input.md) | Your project already uses flakes. |
+| [Inputless flakes](inputless-flake.md) | You want `nix develop`, but no flake inputs to resolve. |
+| [npins](npins.md) | Your project uses plain Nix files. |
 
 Pick the one that fits. They are not a progression to work through.
 

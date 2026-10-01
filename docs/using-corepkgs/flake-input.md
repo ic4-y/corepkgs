@@ -1,4 +1,4 @@
-# With a flake input
+# Flakes
 
 The shortest route, if your project already uses flakes. `corepkgs.lib.mkFlake`
 builds the output structure, so your `flake.nix` states only what you add.

@@ -1,4 +1,4 @@
-# An inputless flake
+# Inputless flakes
 
 The flake CLI, without flake inputs. `nix develop`, `nix build` and `nix flake
 show` all work as usual, and nothing is resolved: `npins` pins corepkgs, and the

@@ -23,14 +23,14 @@
       "file": "using-corepkgs-flake-input.json"
     },
     {
-      "slug": "using-corepkgs-npins",
-      "location": "/docs/using-corepkgs/npins.md",
-      "file": "using-corepkgs-npins.json"
-    },
-    {
       "slug": "using-corepkgs-inputless-flake",
       "location": "/docs/using-corepkgs/inputless-flake.md",
       "file": "using-corepkgs-inputless-flake.json"
+    },
+    {
+      "slug": "using-corepkgs-npins",
+      "location": "/docs/using-corepkgs/npins.md",
+      "file": "using-corepkgs-npins.json"
     },
     {
       "slug": "using-corepkgs-binary-cache",

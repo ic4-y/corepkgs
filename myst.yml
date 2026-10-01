@@ -26,8 +26,8 @@ project:
       children:
         - file: docs/using-corepkgs/README.md
         - file: docs/using-corepkgs/flake-input.md
-        - file: docs/using-corepkgs/npins.md
         - file: docs/using-corepkgs/inputless-flake.md
+        - file: docs/using-corepkgs/npins.md
         - file: docs/using-corepkgs/binary-cache.md
     - title: Stdenv
       children:
