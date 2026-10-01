@@ -5,7 +5,9 @@ reasoning, so a reader who finds nixpkgs behaving differently knows why.
 
 ## Stdenv
 
-The stdenv **differs substantially**, and it is the reason this project exists — see [Stdenv](../stdenv/README.md) for its defaults, its supported platforms and the Darwin port.
+The stdenv **differs substantially**. It is the reason this project exists; see
+[Stdenv](../stdenv/README.md) for its defaults, its supported platforms and the
+Darwin port.
 
 ## Unfree packages
 
@@ -38,8 +40,9 @@ behaviour globally is a machine-level concern, not a build-level one.
 
 ## Tests do not run by default
 
-`doCheck` defaults to **`false`** across the package set, so a package's test suite is not executed as part of its build. The critical path stays lean, and a change to a
-test-only input stops invalidating downstream packages. Run a package's tests
+`doCheck` defaults to **`false`** across the package set, so a package's test
+suite is not executed as part of its build. A change to a test-only input
+therefore stops invalidating downstream packages. Run a package's tests
 explicitly, with
 `doCheck = true`, or evaluate the dedicated derivation at `pkg.passthru.tests.*`.
 

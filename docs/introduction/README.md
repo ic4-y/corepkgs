@@ -11,8 +11,8 @@ and cause **less rebuild churn** than something the size of nixpkgs.
 
 ## Two kinds of reader
 
-These pages serve two audiences, and they are worth telling apart because almost
-everything downstream depends on which one you are.
+These pages serve two audiences. Almost everything downstream depends on which
+one you are.
 
 **If you are consuming corepkgs** — using it as the base for a package set of
 your own, or building something that has to sit below the rest — start with

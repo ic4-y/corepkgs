@@ -1,7 +1,7 @@
 # Stdenv
 
 corepkgs' standard environment is the reason the project exists. It is the base a
-larger package set builds on, and it is deliberately **stricter and more parallel
+larger package set builds on. It is deliberately **stricter and more parallel
 than nixpkgs'**.
 
 The code lives in `stdenv/`, which encapsulates the stdenv, the spliced packages
@@ -9,8 +9,8 @@ and the construction of the package set from a set of overlays.
 
 ## How it differs from nixpkgs
 
-Six defaults differ. Each one is a deliberate change, and the first two are the
-ones most likely to surprise a package brought over from nixpkgs.
+Six defaults differ, each a deliberate change. The first two are the ones most
+likely to surprise a package brought over from nixpkgs.
 
 | Difference | What it means |
 | --- | --- |
@@ -21,9 +21,9 @@ ones most likely to surprise a package brought over from nixpkgs.
 | `enableParallelChecking` defaults to `true` | Test phases run in parallel too. |
 | `enableParallelInstalling` defaults to `true` | Install phases likewise. |
 
-`strictDeps` is the one that breaks packages most often, and it breaks them
-honestly: a package that relied on a transitive dependency being visible will
-fail to find a program it never declared.
+`strictDeps` is the one that breaks packages most often. A package that relied on
+a transitive dependency being visible will fail to find a program it never
+declared.
 
 ## Supported platforms
 
@@ -48,9 +48,7 @@ of the attribute is the point.
 
 ## Updating it on Darwin
 
-Two steps, and the order matters.
-
-First, update `llvmPackages` for Darwin in `top-level.nix` to match
+Update `llvmPackages` for Darwin in `top-level.nix` to match
 `llvmPackages.latest`. This is timed against LLVM's release schedule: use the
 spring release, and once `llvmPackages.latest` has been moved to match. If LLVM
 has announced patch releases, wait until those land in nixpkgs before updating.

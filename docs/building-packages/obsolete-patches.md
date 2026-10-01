@@ -48,9 +48,8 @@ stdenv.mkDerivation {
 
 ## When only some hunks fail
 
-A multi-hunk patch can apply half its hunks and fail the rest, and the build may
-carry on with a HALF-patched tree. That is worse than a patch that fails
-outright, because the failure is silent.
+A multi-hunk patch can apply half its hunks and fail the rest. The build then
+carries on with a half-patched tree, and fails later somewhere unrelated.
 
 :::{caution}
 **A partially-applied patch is worse than one that fails outright.** Regenerate

@@ -20,8 +20,8 @@ that actually broke.
 
 :::{caution}
 **The file you are editing is not the one that is broken.** The `.drv` path in
-the error names the package that broke, and that is the one to repair — editing
-the package you were updating cannot fix it.
+the error names the package to repair, which is not the package you were
+updating.
 :::
 
 Repair the broken dependency, then retry the original update.

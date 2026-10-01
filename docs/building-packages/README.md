@@ -4,8 +4,8 @@ A version bump fails in a handful of recognisable ways. Each page below takes on
 of them: what the failure looks like, why it happens, and the fix.
 
 Start with [Obsolete Patches](obsolete-patches.md) if the error mentions a patch
-or a hunk. It is the most common failure after a bump, and it is the one worth
-ruling out before reading anything else.
+or a hunk. It is the most common failure after a bump, so rule it out before
+reading anything else.
 
 | Guide | When to use |
 |-------|-------------|
