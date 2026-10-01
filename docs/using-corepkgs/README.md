@@ -12,7 +12,7 @@ shell and a package — so you can compare them rather than take one on faith.
 | --- | --- |
 | [Flakes](flake-input.md) | Your project already uses flakes. |
 | [Inputless flakes](inputless-flake.md) | You want `nix develop`, but no flake inputs to resolve. |
-| [npins](npins.md) | Your project uses plain Nix files. |
+| [Npins](npins.md) | Your project uses plain Nix files. |
 
 Pick the one that fits. They are not a progression to work through.
 

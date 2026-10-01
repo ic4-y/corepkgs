@@ -1,4 +1,4 @@
-# npins
+# Npins
 
 No flakes, no `flake.lock`, nothing to resolve — `npins` pins corepkgs and the
 files below are plain Nix. This is the route for a repository that does not use
