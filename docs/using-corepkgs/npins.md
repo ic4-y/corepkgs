@@ -1,8 +1,7 @@
 # Npins
 
-No flakes, no `flake.lock`, nothing to resolve — `npins` pins corepkgs and the
-files below are plain Nix. This is the route for a repository that does not use
-flakes at all.
+corepkgs can be used without flakes: `npins` pins it and the files below import
+that pin, so nothing here is a flake.
 
 `default.nix` reads the pin, and the package lives in its own file exactly as it
 does under the flake:
@@ -23,8 +22,8 @@ in
 ```
 
 :::{caution}
-`pkgs.mkShell` — the constructor nixpkgs users reach for — does not exist here.
-Measured: `pkgs ? mkShell` is `false` while `pkgs ? mkDevShell` is `true`.
+There is no `pkgs.mkShell` in corepkgs, though it is the constructor nixpkgs users
+reach for. The equivalent here is `pkgs.mkDevShell`.
 :::
 
 `shell.nix`:

@@ -1,13 +1,13 @@
 # Binary cache
 
 corepkgs publishes its build outputs to a binary cache, and every consumer should
-declare it. Skipping it does not fail — it silently bootstraps a compiler from
+declare it. Not declaring it does not fail; the consumer builds a compiler from
 source instead.
 
 :::{caution}
-`nixConfig` is **not inherited** across a flake input or a pin. The same `hello`
-package took **13+ minutes and was still building** without the cache, and
-**2.9 seconds** with it.
+Declare the cache before your first build. `nixConfig` is not inherited across a
+flake input or a pin, so a consumer that omits it compiles a compiler from source
+— the same `hello` package took over 13 minutes that way, and 2.9 seconds with it.
 :::
 
 Declare it in the `flake.nix` that consumes corepkgs — this is the input route,

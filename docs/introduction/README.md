@@ -17,8 +17,7 @@ everything downstream depends on which one you are.
 **If you are consuming corepkgs** — using it as the base for a package set of
 your own, or building something that has to sit below the rest — start with
 [Using corepkgs](../using-corepkgs/README.md). It covers the binary cache, a
-flake that takes corepkgs as an input, and the same thing with `npins` and no
-flakes at all.
+flake that takes corepkgs as an input, and the same thing pinned with `npins`.
 
 **If you are working in corepkgs** — packaging a new version, fixing a failed
 build, or deciding whether a change belongs here — read [Stdenv](../stdenv/README.md)

@@ -1,11 +1,11 @@
 # Flakes
 
-The shortest route, if your project already uses flakes. `corepkgs.lib.mkFlake`
-builds the output structure, so your `flake.nix` states only what you add.
+Use this when your project already uses flakes. `corepkgs.lib.mkFlake` builds the
+output structure, so your `flake.nix` states only what you add.
 
 :::{caution}
-`mk-flake.nix`'s own header shows `core-pkgs.mkFlake { … }`, but that form fails
-with `attribute 'mkFlake' missing` — the facade is exposed on the `lib` output.
+Call it as `corepkgs.lib.mkFlake`, not `corepkgs.mkFlake`. The facade is on the
+`lib` output, and the root form fails with `attribute 'mkFlake' missing`.
 :::
 
 `flake.nix`:

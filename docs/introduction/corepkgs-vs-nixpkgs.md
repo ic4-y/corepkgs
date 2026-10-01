@@ -9,9 +9,10 @@ The stdenv **differs substantially**, and it is the reason this project exists â
 
 ## Unfree packages
 
-Nixpkgs defaults `config.allowUnfree` to `false` and expects you to opt in. corepkgs defaults it to **`true`**, because the point of the fork is to build the
-software you asked for rather than to warn you about it. The separate allow-list
-is gone: `config.allowUnfreePackages` is now **`config.licenses.accept`**.
+Nixpkgs defaults `config.allowUnfree` to `false` and expects you to opt in.
+corepkgs defaults it to **`true`**, so a package that needs unfree software builds
+without a further opt-in. The separate allow-list is gone:
+`config.allowUnfreePackages` is now **`config.licenses.accept`**.
 
 ## Evaluation is pure
 
@@ -38,7 +39,8 @@ behaviour globally is a machine-level concern, not a build-level one.
 ## Tests do not run by default
 
 `doCheck` defaults to **`false`** across the package set, so a package's test suite is not executed as part of its build. The critical path stays lean, and a change to a
-test-only input stops rebuilding the world. Run a package's tests explicitly, with
+test-only input stops invalidating downstream packages. Run a package's tests
+explicitly, with
 `doCheck = true`, or evaluate the dedicated derivation at `pkg.passthru.tests.*`.
 
 `buildPythonPackage` takes this further with `testPaths`, a list of the files and
@@ -52,7 +54,7 @@ A non-empty `testPaths` produces a separate `test_src` output holding just those
 paths, plus a `passthru.tests.python` derivation that runs the suite against the
 installed package. Because that derivation skips the configure, build and install
 phases, running the tests no longer rebuilds the package â€” so a test failure, or
-churn in a test-only dependency, stops invalidating downstream consumers.
+churn in a test-only dependency, no longer invalidates downstream consumers.
 
 ## Repository layout
 

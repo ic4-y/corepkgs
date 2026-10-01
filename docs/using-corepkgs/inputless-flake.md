@@ -5,10 +5,9 @@ show` all work as usual, and nothing is resolved: `npins` pins corepkgs, and the
 flake reads that pin.
 
 :::{tip}
-A flake input drags in corepkgs' own inputs. This consumer's lock carries **8
-nodes** — `nix-lib`, `treefmt-nix`, `systems`, `nixpkgs` twice and `ekala-org` —
-none of which a consumer of the package set uses. The inputless form evaluates
-`default.nix` and resolves **none**.
+A flake input also brings in corepkgs' own inputs — `nix-lib`, `treefmt-nix`,
+`systems`, `nixpkgs`, `ekala-org` — which a consumer never uses. The inputless
+form evaluates `default.nix` instead and resolves none of them.
 :::
 
 **What the trade costs you.** `nix flake update` no longer moves corepkgs —
