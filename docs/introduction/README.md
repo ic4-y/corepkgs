@@ -8,21 +8,22 @@ and the module-system behaviour that everything else builds on.
 The narrower scope is the point. A smaller surface means updates land more often
 and cause **less rebuild churn** than something the size of nixpkgs.
 
-This documentation is for people working *in* corepkgs — packaging a new version,
-fixing a failed build, or deciding whether a change belongs here.
+## Two kinds of reader
 
-## Where to start
+These pages serve two audiences, and they are worth telling apart because almost
+everything downstream depends on which one you are.
 
-If you are updating a package and the build broke, [Common Build
-Issues](common-issues/README.md) is a set of failure modes with the fix beside
-each one. Most version bumps fail in one of those ways.
+**If you are consuming corepkgs** — using it as the base for a package set of
+your own, or building something that has to sit below the rest — start with
+[Using corepkgs](../using-corepkgs/README.md). It covers the binary cache, a
+flake that takes corepkgs as an input, and the same thing with `npins` and no
+flakes at all.
 
-Start with **Obsolete Patches** if the error mentions a patch or a hunk. It is the
-most common failure after a bump.
-
-If you are wondering why something behaves differently here than it does in
-nixpkgs, [Corepkgs vs. Nixpkgs](corepkgs-vs-nixpkgs.md) lists the deliberate
-divergences and the reasoning behind them.
+**If you are working in corepkgs** — packaging a new version, fixing a failed
+build, or deciding whether a change belongs here — read [Stdenv](../stdenv/README.md)
+first, then [Building Packages](../building-packages/README.md). The stdenv page
+comes first because two of its defaults cause failures that look like something
+else entirely.
 
 ## How this repository is organised
 

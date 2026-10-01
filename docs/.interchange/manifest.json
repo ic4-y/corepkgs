@@ -13,39 +13,49 @@
       "file": "introduction-corepkgs-vs-nixpkgs.json"
     },
     {
-      "slug": "common-issues",
-      "location": "/docs/common-issues/README.md",
-      "file": "common-issues.json"
+      "slug": "using-corepkgs",
+      "location": "/docs/using-corepkgs/README.md",
+      "file": "using-corepkgs.json"
     },
     {
-      "slug": "common-issues-cmake-packages",
-      "location": "/docs/common-issues/cmake-packages.md",
-      "file": "common-issues-cmake-packages.json"
+      "slug": "stdenv",
+      "location": "/docs/stdenv/README.md",
+      "file": "stdenv.json"
     },
     {
-      "slug": "common-issues-compiler-errors",
-      "location": "/docs/common-issues/compiler-errors.md",
-      "file": "common-issues-compiler-errors.json"
+      "slug": "building-packages",
+      "location": "/docs/building-packages/README.md",
+      "file": "building-packages.json"
     },
     {
-      "slug": "common-issues-dependency-failures",
-      "location": "/docs/common-issues/dependency-failures.md",
-      "file": "common-issues-dependency-failures.json"
+      "slug": "building-packages-obsolete-patches",
+      "location": "/docs/building-packages/obsolete-patches.md",
+      "file": "building-packages-obsolete-patches.json"
     },
     {
-      "slug": "common-issues-obsolete-patches",
-      "location": "/docs/common-issues/obsolete-patches.md",
-      "file": "common-issues-obsolete-patches.json"
+      "slug": "building-packages-dependency-failures",
+      "location": "/docs/building-packages/dependency-failures.md",
+      "file": "building-packages-dependency-failures.json"
     },
     {
-      "slug": "common-issues-python-packages",
-      "location": "/docs/common-issues/python-packages.md",
-      "file": "common-issues-python-packages.json"
+      "slug": "building-packages-compiler-errors",
+      "location": "/docs/building-packages/compiler-errors.md",
+      "file": "building-packages-compiler-errors.json"
     },
     {
-      "slug": "common-issues-rust-packages",
-      "location": "/docs/common-issues/rust-packages.md",
-      "file": "common-issues-rust-packages.json"
+      "slug": "building-packages-cmake-packages",
+      "location": "/docs/building-packages/cmake-packages.md",
+      "file": "building-packages-cmake-packages.json"
+    },
+    {
+      "slug": "building-packages-python-packages",
+      "location": "/docs/building-packages/python-packages.md",
+      "file": "building-packages-python-packages.json"
+    },
+    {
+      "slug": "building-packages-rust-packages",
+      "location": "/docs/building-packages/rust-packages.md",
+      "file": "building-packages-rust-packages.json"
     }
   ]
 }

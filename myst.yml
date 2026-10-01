@@ -7,23 +7,35 @@ project:
   # where it lives, not from its filename.
   #
   # A GROUP'S FIRST PAGE IS ITS OWN INDEX, which is what makes the group's heading and its
-  # first entry the same place: a reader clicking "Introduction" arrives at the overview and
+  # first entry the same place: a reader clicking a group's name arrives at its overview and
   # the submenu opens around them, rather than the label and the entry naming two different
   # things. MyST requires the first toc item to be a file, so a group's index leads and its
   # group follows.
+  #
+  # THE GROUPS FOLLOW THE READER'S QUESTION, in the order they ask it: what is this, how do I
+  # use it, what does the standard environment do to my build, and how do I fix a build that
+  # broke. Stdenv sits between using and building because both audiences need it — a consumer
+  # wants to know what `strictDeps` will do, and a package author wants to know why the
+  # failure looks the way it does.
   toc:
     - file: docs/introduction/README.md
     - title: Introduction
       children:
         - file: docs/introduction/corepkgs-vs-nixpkgs.md
-    - title: Common Issues
+    - title: Using corepkgs
       children:
-        - file: docs/common-issues/README.md
-        - file: docs/common-issues/cmake-packages.md
-        - file: docs/common-issues/compiler-errors.md
-        - file: docs/common-issues/dependency-failures.md
-        - file: docs/common-issues/obsolete-patches.md
-        - file: docs/common-issues/python-packages.md
-        - file: docs/common-issues/rust-packages.md
+        - file: docs/using-corepkgs/README.md
+    - title: Stdenv
+      children:
+        - file: docs/stdenv/README.md
+    - title: Building Packages
+      children:
+        - file: docs/building-packages/README.md
+        - file: docs/building-packages/obsolete-patches.md
+        - file: docs/building-packages/dependency-failures.md
+        - file: docs/building-packages/compiler-errors.md
+        - file: docs/building-packages/cmake-packages.md
+        - file: docs/building-packages/python-packages.md
+        - file: docs/building-packages/rust-packages.md
 site:
   template: ./docs-site-template
