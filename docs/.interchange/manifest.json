@@ -38,14 +38,14 @@
       "file": "common-issues-rust-packages.json"
     },
     {
-      "slug": "corepkgs-vs-nixpkgs",
-      "location": "/docs/corepkgs-vs-nixpkgs.md",
-      "file": "corepkgs-vs-nixpkgs.json"
+      "slug": "introduction",
+      "location": "/docs/introduction/README.md",
+      "file": "introduction.json"
     },
     {
-      "slug": "index",
-      "location": "/docs/index.md",
-      "file": "index.json"
+      "slug": "introduction-corepkgs-vs-nixpkgs",
+      "location": "/docs/introduction/corepkgs-vs-nixpkgs.md",
+      "file": "introduction-corepkgs-vs-nixpkgs.json"
     }
   ]
 }
