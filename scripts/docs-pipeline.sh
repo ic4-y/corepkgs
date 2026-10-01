@@ -32,6 +32,16 @@
 # files in this repository) collide outright. The slug is therefore derived from the source path,
 # and the file is named after the slug.
 #
+# WHY DOCUMENT REFERENCES ARE RE-POINTED HERE
+#
+# The emitter resolves a reference to a slug derived from a page's BASENAME — so
+# `../stdenv/README.md` becomes `/readme-1`, which means nothing outside the emitter's own site
+# build and is not an identity this artifact uses anywhere else. Every link is therefore
+# re-resolved from the destination the SOURCE wrote, kept on the node as `urlSource`, into the
+# same source-path slug the files and manifest use. A reference that lands on no page FAILS THE
+# BUILD, which is design §6.7: references resolve in the source build "so a reference that cannot
+# resolve fails that build", rather than shipping a link the site cannot route.
+#
 # WHAT MAKES BOTH TAMPER DIRECTIONS FAIL
 #
 # Byte-equality between a FRESH emission and the committed artifact, over the canonical form
@@ -108,6 +118,8 @@ trap 'rm -rf "$tmp"' EXIT
 TOC_ORDER="$(jq -r '(.projects[0].toc // []) | .. | objects | .file? // empty' "$SITE_DIR/config.json" 2>/dev/null || true)"
 
 slugs=()
+locations=()
+declare -A EMITTED_FOR=()
 for fresh in "$EMITTED_DIR"/*.json; do
   [ -f "$fresh" ] || continue
   location="$(jq -r '.location' "$fresh")"
@@ -118,10 +130,82 @@ for fresh in "$EMITTED_DIR"/*.json; do
     echo "  $(jq -r '.location' "$tmp/$slug.json") and $location" >&2
     exit 1
   fi
-  validate --normalize "$fresh" \
+  slugs+=("$slug")
+  locations+=("$location")
+  # The emitter's FILENAME is the emitter's business (`index.json`, `readme-1.json`); keyed by the
+  # location it declares, so nothing here guesses at its naming.
+  EMITTED_FOR["$location"]="$fresh"
+done
+
+# THE PAGE SET, as source locations — the universe a document reference may resolve into.
+PAGE_LOCATIONS="$(printf '%s\n' ${locations[@]+"${locations[@]}"} | jq -Rsc 'split("\n")[:-1]')"
+
+# RE-POINT EVERY DOCUMENT REFERENCE, AND REFUSE ONE THAT RESOLVES TO NO PAGE.
+#
+# A reference is resolved from the destination the SOURCE wrote, not from the emitter's url: the
+# emitter slugs by BASENAME, so `../stdenv/README.md` emits as `/readme-1` — an identity that
+# means nothing outside the emitter's own site build, and that this artifact does not use. The
+# source destination is kept on the node as `urlSource`, and the artifact's own identity is the
+# slug derived from a page's source path. See the filter for the two steps.
+#
+# WHY THE FAILURE IS HERE. Design §6.7: references resolve in the SOURCE build, "so a reference
+# that cannot resolve fails that build." MyST resolves the ones it can and leaves the rest
+# verbatim, so without this check a stale reference ships as a link the site cannot route.
+LINK_FILTER="$tmp/links.jq"
+cat > "$LINK_FILTER" <<'JQ'
+def slug_of($loc):
+  $loc | sub("^/docs/";"") | sub("\\.md$";"") | sub("/README$";"") | sub("^README$";"docs") | gsub("/";"-");
+
+# Resolve a source-relative destination against the emitting page's directory, collapsing `.` and
+# `..`. A leading `/` is an empty first segment and is dropped.
+def resolve($dir; $rel):
+  ($dir + "/" + $rel | split("/"))
+  | reduce .[] as $s ({o: []};
+      if $s == "" or $s == "." then .
+      elif $s == ".." then .o = .o[0:(.o | length) - 1]
+      else .o += [$s] end)
+  | "/" + (.o | join("/"));
+
+# A DOCUMENT reference: the source wrote a path to a `.md` file. An anchor, an external url, a
+# protocol-relative url and an image are all left alone.
+def doc_path: (.urlSource // "") | split("#")[0];
+def fragment: (.urlSource // "") | (split("#")[1:] | join("#"));
+def is_doc_ref:
+  (.urlSource != null)
+  and (doc_path | endswith(".md"))
+  and ((.urlSource | startswith("//")) | not)
+  and ((.urlSource | test("^[A-Za-z][A-Za-z0-9+.-]*:")) | not);
+
+([.. | objects | select(.type == "link") | select(is_doc_ref) | resolve($dir; doc_path)] | unique) as $targets
+| {
+    unresolved: [$targets[] | . as $t | select(($pages | index($t)) == null) | $t],
+    artifact: walk(
+      if type == "object" and .type == "link" and is_doc_ref then
+        resolve($dir; doc_path) as $r
+        | if ($pages | index($r)) then
+            .url = ("/" + slug_of($r) + (if (fragment) != "" then "#" + (fragment) else "" end))
+            | del(.dataUrl)
+          else . end
+      else . end)
+  }
+JQ
+
+for i in "${!slugs[@]}"; do
+  slug="${slugs[$i]}"
+  location="${locations[$i]}"
+  result="$(validate --normalize "${EMITTED_FOR[$location]}" \
+    | jq -c --arg dir "$(dirname "$location")" --argjson pages "$PAGE_LOCATIONS" -f "$LINK_FILTER")"
+  broken="$(printf '%s' "$result" | jq -r '.unresolved[]')"
+  if [ -n "$broken" ]; then
+    echo "docs-pipeline: a reference in $location resolves to no page:" >&2
+    while IFS= read -r t; do echo "    $t" >&2; done <<< "$broken"
+    echo "  A reference that cannot resolve must fail the source build (design §6.7);" >&2
+    echo "  a link the site cannot route is a dead end for the reader." >&2
+    exit 1
+  fi
+  printf '%s' "$result" | jq -c '.artifact' \
     | jq -c --argjson fv "$FORMAT_VERSION" --arg pv "$PARSER_VERSION" --arg slug "$slug" \
         '. + {slug: $slug, docs_format: $fv, parser_version: $pv}' > "$tmp/$slug.json"
-  slugs+=("$slug")
 done
 
 # REORDER INTO THE TOC'S ORDER. A page the toc does not name keeps a place after those it does,
