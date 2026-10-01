@@ -3,6 +3,16 @@
   "parser_version": "1.9.1",
   "pages": [
     {
+      "slug": "introduction",
+      "location": "/docs/introduction/README.md",
+      "file": "introduction.json"
+    },
+    {
+      "slug": "introduction-corepkgs-vs-nixpkgs",
+      "location": "/docs/introduction/corepkgs-vs-nixpkgs.md",
+      "file": "introduction-corepkgs-vs-nixpkgs.json"
+    },
+    {
       "slug": "common-issues",
       "location": "/docs/common-issues/README.md",
       "file": "common-issues.json"
@@ -36,16 +46,6 @@
       "slug": "common-issues-rust-packages",
       "location": "/docs/common-issues/rust-packages.md",
       "file": "common-issues-rust-packages.json"
-    },
-    {
-      "slug": "introduction",
-      "location": "/docs/introduction/README.md",
-      "file": "introduction.json"
-    },
-    {
-      "slug": "introduction-corepkgs-vs-nixpkgs",
-      "location": "/docs/introduction/corepkgs-vs-nixpkgs.md",
-      "file": "introduction-corepkgs-vs-nixpkgs.json"
     }
   ]
 }

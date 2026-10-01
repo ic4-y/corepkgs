@@ -58,7 +58,8 @@ done
 
 cd "$ROOT"
 
-EMITTED_DIR="_build/site/content"
+SITE_DIR="_build/site"
+EMITTED_DIR="$SITE_DIR/content"
 COMMITTED_DIR="docs/.interchange"
 MANIFEST="$COMMITTED_DIR/manifest.json"
 
@@ -98,6 +99,14 @@ myst build --site >/dev/null
 # they are what the toc produced; the slug is applied on top.
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
+# THE READING ORDER COMES FROM THE TOC, not from the filesystem. A glob is alphabetical, and
+# alphabetical is not an order anyone chose: `common-issues` sorts before `introduction`, which
+# would put the troubleshooting guide above the page that introduces the repository. The emitter
+# writes the toc to `config.json` as it emits — available HERE, at generation time, even though
+# it is build output and is never committed — so that file is where the order is read. A page
+# the toc does not name keeps a position after those it does.
+TOC_ORDER="$(jq -r '(.projects[0].toc // []) | .. | objects | .file? // empty' "$SITE_DIR/config.json" 2>/dev/null || true)"
+
 slugs=()
 for fresh in "$EMITTED_DIR"/*.json; do
   [ -f "$fresh" ] || continue
@@ -115,14 +124,36 @@ for fresh in "$EMITTED_DIR"/*.json; do
   slugs+=("$slug")
 done
 
+# REORDER INTO THE TOC'S ORDER. A page the toc does not name keeps a place after those it does,
+# ordered by slug, so a page cannot vanish by being absent from the toc — it only fails to be
+# ordered by it. Written as a filter over the collected slugs rather than a second walk, so the
+# set of pages and the set of artifacts cannot diverge.
+if [ -n "$TOC_ORDER" ]; then
+  ordered=()
+  while IFS= read -r file; do
+    [ -n "$file" ] || continue
+    want="$(slug_of "/$file")"
+    for slug in "${slugs[@]}"; do
+      [ "$slug" = "$want" ] && ordered+=("$slug")
+    done
+  done <<< "$TOC_ORDER"
+  remaining=()
+  for slug in "${slugs[@]}"; do
+    found=0
+    for seen in "${ordered[@]}"; do [ "$slug" = "$seen" ] && found=1; done
+    [ "$found" -eq 0 ] && remaining+=("$slug")
+  done
+  slugs=("${ordered[@]}" ${remaining[@]+"${remaining[@]}"})
+fi
+
 [ "${#slugs[@]}" -gt 0 ] || { echo "docs-pipeline: the emitter produced no JSON — a comparison against nothing passes" >&2; exit 1; }
 
-# The page set, sorted for a stable diff.
+# The page set, in the order the toc declared it.
 MANIFEST_JSON="$(
   for slug in "${slugs[@]}"; do
     jq -c --arg slug "$slug" '{slug: $slug, location: .location, file: ($slug + ".json")}' "$tmp/$slug.json"
   done | jq -cs --argjson fv "$FORMAT_VERSION" --arg pv "$PARSER_VERSION" \
-    '{docs_format: $fv, parser_version: $pv, pages: sort_by(.slug)}'
+    '{docs_format: $fv, parser_version: $pv, pages: .}'
 )"
 
 if [ "$MODE" = "write" ]; then
