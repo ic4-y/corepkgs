@@ -1,5 +1,10 @@
 # Using corepkgs
 
+Three ways to depend on corepkgs, compared side by side: a flake input, an
+inputless flake, and npins with no flakes. Pick the one that matches how your
+project already gets its dependencies — they are not a progression to work
+through.
+
 :::{note}
 corepkgs is the **base layer** other package sets build on. Use **ekapkgs**
 unless you are building that layer itself.

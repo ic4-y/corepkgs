@@ -1,5 +1,9 @@
 # Binary cache
 
+corepkgs publishes its build outputs to a binary cache, and every consumer should
+declare it. Skipping it does not fail — it silently bootstraps a compiler from
+source instead.
+
 :::{caution}
 `nixConfig` is **not inherited** across a flake input or a pin. The same `hello`
 package took **13+ minutes and was still building** without the cache, and
