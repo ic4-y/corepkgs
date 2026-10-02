@@ -58,6 +58,11 @@
       "file": "stdenv-darwin.json"
     },
     {
+      "slug": "adding-packages",
+      "location": "/docs/adding-packages/README.md",
+      "file": "adding-packages.json"
+    },
+    {
       "slug": "building-packages",
       "location": "/docs/building-packages/README.md",
       "file": "building-packages.json"

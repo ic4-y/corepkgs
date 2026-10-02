@@ -36,5 +36,7 @@ Without it, the first build compiles a compiler from source.
 
 - **Building packages against corepkgs** — [Corepkgs vs. Nixpkgs](../introduction/corepkgs-vs-nixpkgs.md)
   lists what behaves differently from nixpkgs.
-- **Writing your own package** — [Building Packages](../building-packages/README.md)
+- **Adding a package to corepkgs** — [Adding Packages](../adding-packages/README.md)
+  shows the file, the criteria and a worked example.
+- **Something will not build** — [Common Problems](../building-packages/README.md)
   takes one failure mode at a time.

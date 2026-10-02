@@ -19,11 +19,11 @@ your own, or building something that has to sit below the rest — start with
 [Using corepkgs](../using-corepkgs/README.md). It covers the binary cache, a
 flake that takes corepkgs as an input, and the same thing pinned with `npins`.
 
-**If you are working in corepkgs** — packaging a new version, fixing a failed
-build, or deciding whether a change belongs here — read [Corepkgs stdenv](../stdenv/README.md)
-first, then [Building Packages](../building-packages/README.md). The stdenv page
-comes first because two of its defaults cause failures that look like something
-else entirely.
+**If you are working in corepkgs** — adding a package, fixing a failed build, or
+deciding whether a change belongs here — read [Corepkgs stdenv](../stdenv/README.md)
+first, then [Adding Packages](../adding-packages/README.md). The stdenv page comes
+first because two of its defaults cause failures that look like something else
+entirely, and you will meet them the first time you add something.
 
 ## Guiding principles
 

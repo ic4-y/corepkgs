@@ -35,7 +35,10 @@ project:
         - file: docs/stdenv/differences.md
         - file: docs/stdenv/platforms.md
         - file: docs/stdenv/darwin.md
-    - title: Building Packages
+    - title: Adding Packages
+      children:
+        - file: docs/adding-packages/README.md
+    - title: Common Problems
       children:
         - file: docs/building-packages/README.md
         - file: docs/building-packages/obsolete-patches.md
