@@ -47,4 +47,4 @@ It is **stricter**. A build must declare the tools it uses, rather than finding
 them on `PATH` by accident. A dependency becomes a fact about the expression.
 
 It is **more parallel**. Building, checking and installing all use `-j` by
-default, because that is what you want on the machine doing the work.
+default, so a machine with cores actually uses them.

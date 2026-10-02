@@ -8,19 +8,69 @@ This page covers what belongs here, how to add it, and a worked example.
 
 ## What belongs here
 
-corepkgs is a base layer, not a general package set. It is deliberately narrower
-than nixpkgs, and that is what lets updates land more often and rebuild less.
+corepkgs is a base layer, not a general package set. Its scope is narrower than
+nixpkgs by design, so that updates land more often and less has to be rebuilt when
+they do.
 
-These belong:
+Four kinds of thing belong.
 
-- the stdenv, and the compilers, interpreters and toolchains it needs
-- common language ecosystem tools — popular linters, package managers, build
-  systems
-- logic around overlays and package scopes
-- the ecosystems a system needs to exist, such as systemd, and their dependencies
+**The build environment itself.** The stdenv, and the compilers, interpreters and
+toolchains it needs to work.
 
-An end-user application usually does not. If it exists to be used rather than to
-build other things, it probably belongs in a set built on top of this one.
+```{code-block} text
+:filename: what is already here
+
+  pkgs/gcc/                          the default compiler
+  pkgs-many/llvm/                    LLVM, several versions
+  pkgs-many/gcc-releases/            GCC, several releases
+  pkgs-many/binutils/                the linker and binutils
+  pkgs-many/autoconf/  automake/     the autotools
+  pkgs-many/cmake/  meson/  ninja/   the build systems
+```
+
+**Language ecosystems, and the tools around them.** An interpreter or compiler,
+plus the ecosystem tooling a project of that language expects — package managers,
+linters, test runners.
+
+```{code-block} text
+:filename: what is already here
+
+  python/cpython/      python/pkgs/   the interpreter and 178 packages
+  pkgs-many/perl/      perl/pkgs/     the interpreter and 172 packages
+  pkgs-many/rust/      pkgs-many/go/  the toolchains
+  python/pkgs/pip/     python/pkgs/virtualenv/
+  python/pkgs/mypy/    python/pkgs/black/   a type checker and a formatter
+  pkgs-many/nodejs/    pkgs-many/pnpm/      a runtime and its package manager
+```
+
+**The logic that assembles a package set.** Overlays, package scopes, and the
+machinery that turns directories into attributes is part of the product, not an
+implementation detail.
+
+```{code-block} text
+:filename: what is already here
+
+  stdenv/stage.nix                   layers the package set from overlays
+  top-level.nix                      the top-level overlay
+  stdenv/splice.nix                  keeps build and host inputs apart
+  python/passthrufun.nix             the Python package set's scope
+  haskell/make-package-set.nix       the Haskell package set's scope
+```
+
+**What a running system needs.** The services and daemons a machine cannot boot
+without, and their dependencies.
+
+```{code-block} text
+:filename: what is already here
+
+  pkgs/linux-support/pkgs/systemd/   the init system
+  pkgs/dbus/                         the message bus systemd talks to
+  pkgs/polkit/                       privilege escalation
+  pkgs/linux-support/pkgs/           kernel modules and hardware support
+```
+
+An end-user application usually does not belong. If it exists to be used rather
+than to build other things, it probably belongs in a set built on top of this one.
 
 :::{tip}
 The test is dependency direction. If nothing in corepkgs would depend on it, it is
