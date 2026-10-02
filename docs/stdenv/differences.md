@@ -3,6 +3,7 @@
 Six defaults differ. All six are set in one place.
 
 ```{code-block} nix
+:class: excerpt
 :filename: stdenv/generic/make-derivation.nix
 
 strictDeps ? true,
@@ -25,6 +26,7 @@ If it does not, it fails. It will not quietly find the tool on `PATH`.
 The fix is to declare the input you were relying on:
 
 ```{code-block} nix
+:class: excerpt
 :filename: pkgs/AvailabilityVersions/default.nix
 
 buildInputs = [ bashNonInteractive ];
@@ -44,6 +46,7 @@ build `-D` flags by hand.
 `cmakeEntries` takes a set of cache entries. Booleans become `ON` and `OFF`:
 
 ```{code-block} nix
+:class: excerpt
 :filename: pkgs/aws-c-common/default.nix
 
 cmakeEntries = {
@@ -55,6 +58,7 @@ cmakeEntries = {
 `"disabled"` or `"auto"`:
 
 ```{code-block} nix
+:class: excerpt
 :filename: pkgs/at-spi2-core/default.nix
 
 mesonEntries = {
@@ -67,6 +71,7 @@ mesonEntries = {
 ships optimised unless it says otherwise.
 
 ```{code-block} nix
+:class: excerpt
 :filename: pkgs-many/nix/modular/packaging/components.nix
 
 mesonBuildType = prevAttrs.mesonBuildType or "release";
@@ -84,6 +89,7 @@ The attribute is always defined. nixpkgs omits it on a native build; here it is 
 boolean you can read.
 
 ```{code-block} nix
+:class: excerpt
 :filename: stdenv/generic/default.nix
 
 isCross = hostPlatform != buildPlatform;
@@ -97,6 +103,7 @@ directly.
 `doCheck` follows `config.doCheckByDefault`, which is off.
 
 ```{code-block} nix
+:class: excerpt
 :filename: stdenv/generic/make-derivation.nix
 
 doCheck ? doCheckByDefault && canExecuteHostOnBuild,

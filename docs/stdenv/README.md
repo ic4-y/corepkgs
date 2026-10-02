@@ -7,6 +7,7 @@ follow.
 You do not call it directly. You receive it:
 
 ```{code-block} nix
+:class: excerpt
 :filename: pkgs/aws-c-common/default.nix
 
 {
@@ -26,6 +27,7 @@ set, so the package says what it needs and the set supplies it.
 The stdenv is small, and each part is a directory you can read:
 
 ```{code-block} text
+:class: excerpt
 :filename: stdenv/
 
   generic/             make-derivation.nix: the defaults every package inherits

@@ -18,6 +18,7 @@ Four kinds of thing belong.
 toolchains it needs to work.
 
 ```{code-block} text
+:class: excerpt
 :filename: build environment
 
   pkgs/gcc/                          the default compiler
@@ -33,6 +34,7 @@ plus the ecosystem tooling a project of that language expects — package manage
 linters, test runners.
 
 ```{code-block} text
+:class: excerpt
 :filename: language ecosystems
 
   python/cpython/      python/pkgs/   the interpreter and 178 packages
@@ -48,6 +50,7 @@ machinery that turns directories into attributes is part of the product, not an
 implementation detail.
 
 ```{code-block} text
+:class: excerpt
 :filename: package-set logic
 
   stdenv/stage.nix                   layers the package set from overlays
@@ -61,6 +64,7 @@ implementation detail.
 without, and their dependencies.
 
 ```{code-block} text
+:class: excerpt
 :filename: system layer
 
   pkgs/linux-support/pkgs/systemd/   the init system

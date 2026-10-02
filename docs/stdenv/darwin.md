@@ -10,6 +10,7 @@ Move Darwin's `llvmPackages` in `top-level.nix` to match `llvmPackages.latest` â
 a one-line change:
 
 ```{code-block} nix
+:class: excerpt
 :filename: top-level.nix
 
 llvmPackages = if stdenv.hostPlatform.isDarwin then llvmPackages_21 else llvm.pkgs;
