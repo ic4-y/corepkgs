@@ -18,7 +18,7 @@ Four kinds of thing belong.
 toolchains it needs to work.
 
 ```{code-block} text
-:filename: what is already here
+:filename: build environment
 
   pkgs/gcc/                          the default compiler
   pkgs-many/llvm/                    LLVM, several versions
@@ -33,7 +33,7 @@ plus the ecosystem tooling a project of that language expects — package manage
 linters, test runners.
 
 ```{code-block} text
-:filename: what is already here
+:filename: language ecosystems
 
   python/cpython/      python/pkgs/   the interpreter and 178 packages
   pkgs-many/perl/      perl/pkgs/     the interpreter and 172 packages
@@ -48,7 +48,7 @@ machinery that turns directories into attributes is part of the product, not an
 implementation detail.
 
 ```{code-block} text
-:filename: what is already here
+:filename: package-set logic
 
   stdenv/stage.nix                   layers the package set from overlays
   top-level.nix                      the top-level overlay
@@ -61,7 +61,7 @@ implementation detail.
 without, and their dependencies.
 
 ```{code-block} text
-:filename: what is already here
+:filename: system layer
 
   pkgs/linux-support/pkgs/systemd/   the init system
   pkgs/dbus/                         the message bus systemd talks to
@@ -80,28 +80,32 @@ not part of corepkgs.
 ## Where the file goes
 
 `pkgs/` is imported by directory. Each subdirectory is a package, and its
-`default.nix` is called with the package set:
+`default.nix` is called with the package set. Everything else in the directory is
+yours to use.
+
+## Add one
+
+Two packages, added step by step. **`mtdev`** is the multitouch protocol
+translation library: it turns raw touchscreen events into gestures. **`nettle`**
+is a cryptographic library.
+
+Both are already in this repository. Read what follows as a reconstruction of how
+they got there, because between them they are the two shapes a package takes.
+`mtdev` is self-contained — one source, one build. `nettle` is not.
+
+There are also the same two packages to look at afterwards, which is the point of
+choosing them: the file you end up with is the file that is here.
+
+### `mtdev`, in one file
+
+Create the directory, and put the package in `default.nix`:
 
 ```{code-block} text
 :filename: pkgs/
 
   mtdev/
     default.nix          becomes pkgs.mtdev
-  nettle/
-    default.nix          becomes pkgs.nettle
-    generic.nix          (a second file, called from default.nix)
 ```
-
-Any file in the directory is yours to use; only `default.nix` is the entry point.
-`nettle` keeps its build in `generic.nix` so `default.nix` can hold just the
-version and the source.
-
-## Add one
-
-1. Create `pkgs/<name>/default.nix`.
-2. Take the arguments you need. `callPackage` fills them in from the set.
-3. Build with `stdenv.mkDerivation`.
-4. Run `./ci/eval.sh` to check it evaluates.
 
 ```{code-block} nix
 :filename: pkgs/mtdev/default.nix
@@ -145,26 +149,18 @@ stops and tells you the right one. Copy it from that message.
 **`meta` is not decoration.** CI enables `checkMeta`, and an unknown or malformed
 field fails the build naming the package.
 
-## Check it
+### `nettle`, in two
 
-```console
-$ ./ci/eval.sh
+`nettle`'s build is long enough to be worth separating from the version and the
+source, and more than one version could exist. So the directory holds both:
+
+```{code-block} text
+:filename: pkgs/
+
+  nettle/
+    default.nix          the version and the source
+    generic.nix          the build, shared by every version
 ```
-
-That evaluates every package in the repository, including yours. It catches the
-failures a build would not: a missing `callPackage` argument, a missing attribute,
-or a type error.
-
-Then build it:
-
-```console
-$ nix-build -A mtdev
-```
-
-## If it needs a second file
-
-Put it beside `default.nix` and call it. `nettle` keeps its version and hash in
-`default.nix` and its build in `generic.nix`:
 
 ```{code-block} nix
 :filename: pkgs/nettle/default.nix
@@ -181,5 +177,25 @@ callPackage ./generic.nix rec {
 }
 ```
 
-Use this when a package has more than one version, or when the build is long enough
-that the version and source are worth separating from it.
+Only `default.nix` is the entry point. It calls `generic.nix` and passes the
+version and source in. `generic.nix` takes them as `version` and `src` and builds
+from them, so a second version would be a second caller rather than a second build
+description.
+
+`nettle` has one caller today. The split is what makes the second one cheap.
+
+## Check it
+
+```console
+$ ./ci/eval.sh
+```
+
+That evaluates every package in the repository, including both of these. It
+catches the failures a build would not: a missing `callPackage` argument, a
+missing attribute, or a type error.
+
+Then build one:
+
+```console
+$ nix-build -A mtdev
+```
