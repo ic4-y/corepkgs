@@ -4,10 +4,13 @@
 `nix build` and `nix flake show` all work as usual, but nothing is resolved:
 `npins` pins corepkgs and the `flake.nix` reads that pin.
 
-## The layout
+There are two things to set up, and they are independent: **build a package**, or
+**get a development shell**. The file is the same shape for both.
 
-The same four files as [the `npins` route](npins.md) — only `flake.nix` is
-different, and it has no `inputs` block:
+## The whole setup
+
+One file, plus the pin. There is no `inputs` block, so there is nothing for Nix to
+resolve before it can evaluate.
 
 ```{code-block} text
 :filename: my-project/
@@ -16,7 +19,7 @@ different, and it has no `inputs` block:
   flake.nix            the entry point, with no inputs of its own
   pkgs/
     hello/
-      default.nix      the package: what it is, and how to build it
+      default.nix      the package, if you are building one
       hello.c          its source
 ```
 
@@ -26,10 +29,9 @@ A flake input also brings in corepkgs' own inputs — `nix-lib`, `treefmt-nix`,
 form evaluates `default.nix` instead and resolves none of them.
 :::
 
-## `flake.nix`
+## Build a package
 
-There is no `inputs` block to resolve: the pin is read from `npins`, and the
-outputs are built from it.
+Both outputs named, so you can build the package and develop in the same shell.
 
 ```{code-block} nix
 :filename: flake.nix
@@ -73,15 +75,49 @@ outputs are built from it.
 system: `import sources.corepkgs { inherit system; }`.
 :::
 
+```console
+$ nix build .#hello
+$ nix develop
+```
+
+## Get a development shell
+
+The same file with the `packages` output removed — for a repository that only
+wants the toolchain:
+
+```{code-block} nix
+:filename: flake.nix
+
+{
+  outputs =
+    { self }:
+    let
+      sources = import ./npins;
+      corepkgs = import sources.corepkgs;
+      forAllSystems = f: { x86_64-linux = f "x86_64-linux"; };
+    in
+    {
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = corepkgs { inherit system; };
+        in
+        {
+          default = pkgs.mkDevShell {
+            packages = [ pkgs.gcc pkgs.gnumake ];
+          };
+        }
+      );
+    };
+}
+```
+
+```console
+$ nix develop
+```
+
 ## What the trade costs
 
 `nix flake update` no longer moves corepkgs — `npins update` does — so a project
 that expects one command to refresh everything now has two. A repository whose
 only input is a package set loses nothing by doing so.
-
-## Build it
-
-```console
-$ nix build .#hello
-$ nix develop
-```

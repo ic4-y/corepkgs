@@ -4,18 +4,19 @@
 Nix files import that pin, so nothing here is a flake and nothing needs
 `flake.lock`.
 
-## The layout
+There are two things to set up, and they are independent: **build a package**, or
+**get a development shell**. You can do both in the same project.
 
-Four files, and a directory `npins` owns. `default.nix` is the entry point — the
-file `nix-build` evaluates; the package lives under `pkgs/`, as it does on every
-route.
+## The whole setup
+
+A package takes four files. `default.nix` is the entry point — the file
+`nix-build` evaluates; the package lives under `pkgs/`, as it does on every route.
 
 ```{code-block} text
 :filename: my-project/
 
   npins/               the pin: which revision of corepkgs, and its hash
   default.nix          the entry point: what this repository builds
-  shell.nix            the development shell
   pkgs/
     hello/
       default.nix      the package: what it is, and how to build it
@@ -31,10 +32,9 @@ $ nix run nixpkgs#npins -- -d npins init
 $ nix run nixpkgs#npins -- -d npins add github ekala-project corepkgs --name corepkgs
 ```
 
-## `default.nix`
+## Build a package
 
-The entry point. It reads the pin and imports corepkgs from it, then names what
-this repository builds.
+`default.nix` reads the pin and names what this repository builds.
 
 ```{code-block} nix
 :filename: default.nix
@@ -49,17 +49,23 @@ in
 ```
 
 The package in `pkgs/hello/` is unchanged from [the flake route](flake-input.md) —
-the same two files work here, because `callPackage` is doing the same job in both.
+the same two files work here, because `callPackage` is doing the same job.
+
+```console
+$ nix-build -A hello
+$ ./result/bin/hello
+hello from corepkgs
+```
 
 :::{caution}
 There is no `pkgs.mkShell` in corepkgs, though it is the constructor nixpkgs users
 reach for. The equivalent here is `pkgs.mkDevShell`.
 :::
 
-## `shell.nix`
+## Get a development shell
 
-The development shell. `nix-shell` evaluates this file, and there is no flake to
-declare it in.
+The tools you work in, with no package built. `shell.nix` is the entry point for
+this one — `nix-shell` evaluates it, and there is no flake to declare it in:
 
 ```{code-block} nix
 :filename: shell.nix
@@ -73,11 +79,6 @@ pkgs.mkDevShell {
 }
 ```
 
-## Build it
-
 ```console
-$ nix-build -A hello
-$ ./result/bin/hello
-hello from corepkgs
 $ nix-shell
 ```

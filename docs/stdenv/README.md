@@ -1,33 +1,58 @@
 # Corepkgs stdenv
 
-`stdenv` is the standard environment a derivation is built in: the compiler and
+`stdenv` is the standard environment a package is built in. It is the compiler and
 linker, the shell that runs each build phase, and the defaults those phases
-follow. Almost every package in this set is built with `stdenv.mkDerivation`, so
-the stdenv's behaviour shows up in nearly every build.
+follow.
 
-corepkgs replaces nixpkgs' stdenv with its own. It is what the rest of the
-package set is built on, and it is the reason this project exists.
+You do not call it directly. You receive it:
 
-## What makes it different
+```{code-block} nix
+:filename: pkgs/aws-c-common/default.nix
 
-Two properties account for most of the difference, and most of the surprises when
-a package is brought over from nixpkgs.
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  cmake,
+  nix,
+}:
+```
+
+Every package takes `stdenv` as an argument. `callPackage` fills it in from the
+set, so the package says what it needs and the set supplies it.
+
+## What it consists of
+
+The stdenv is small, and each part is a directory you can read:
+
+```{code-block} text
+:filename: stdenv/
+
+  generic/             make-derivation.nix: the defaults every package inherits
+  cc-wrapper/          the compiler, wrapped with the flags a build expects
+  bintools-wrapper/    the linker and binutils, wrapped the same way
+  setup-hooks/         the phases: unpack, patch, configure, build, install
+  splice.nix           how build and host inputs are kept apart
+  linux/  darwin/      the per-platform pieces
+```
+
+`generic/default.nix` picks a stdenv for the platform. `make-derivation.nix` is
+where the defaults live — the file the [differences](differences.md) page quotes.
+
+## Why corepkgs replaces it
+
+Two properties account for most of the difference.
 
 It is **stricter**. A build must declare the tools it uses, rather than finding
-them on `PATH` by accident. This is what makes a package's dependencies a fact
-about the expression instead of a property of whatever happened to be installed.
+them on `PATH` by accident. A dependency becomes a fact about the expression.
 
 It is **more parallel**. Building, checking and installing all use `-j` by
 default, because that is what you want on the machine doing the work.
 
-Both are deliberate: the goal is a stdenv that is explicit about what a build
-needs, and that uses the machine it is given.
+## Pages
 
-- [Differences from nixpkgs](differences.md) — the six defaults that differ, and
-  the one that breaks packages most often.
+- [Differences from nixpkgs](differences.md) — the six defaults, each with the
+  code that sets it.
 - [Platforms](platforms.md) — what it builds on, and building it yourself.
-- [Darwin](darwin.md) — the port: updating LLVM, the names that moved, and what is
+- [Darwin](darwin.md) — the port: updating LLVM, the names that moved, what is
   not verified.
-
-The code lives in `stdenv/`, which holds the stdenv, the spliced packages, and the
-construction of the package set from a set of overlays.

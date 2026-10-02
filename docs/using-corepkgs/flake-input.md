@@ -3,32 +3,30 @@
 **Use this if your project already uses flakes.** `corepkgs.lib.mkFlake` builds
 the output structure, so your `flake.nix` states only what you add.
 
-## The layout
+There are two things to set up, and they are independent: **build a package**, or
+**get a development shell**. You can do both in the same file.
 
-Three files do the work. `flake.nix` is the entry point — it names the dependency
-and the outputs; the package itself lives under `pkgs/`, one directory per
-package.
+## The whole setup
+
+A package takes three files. `flake.nix` is the entry point — it names corepkgs
+and declares what you set up; the package itself lives under `pkgs/`, one
+directory per package.
 
 ```{code-block} text
 :filename: my-project/
 
-  flake.nix            the entry point: inputs, and the outputs built from them
+  flake.nix            the entry point: inputs, and what you set up
   pkgs/
     hello/
       default.nix      the package: what it is, and how to build it
       hello.c          its source
 ```
 
-## `flake.nix`
+A development shell needs `flake.nix` alone. Everything under `pkgs/` is unused.
 
-`flake.nix` is the file Nix reads when you run a `nix` command in the directory.
-It has two jobs: name the inputs — here, corepkgs — and declare the outputs built
-from them, which is what `mkFlake` structures for you.
+## Build a package
 
-:::{caution}
-Call it as `corepkgs.lib.mkFlake`, not `corepkgs.mkFlake`. The facade is on the
-`lib` output, and the root form fails with `attribute 'mkFlake' missing`.
-:::
+`flake.nix` names the package in its `packages` output.
 
 ```{code-block} nix
 :filename: flake.nix
@@ -49,20 +47,17 @@ Call it as `corepkgs.lib.mkFlake`, not `corepkgs.mkFlake`. The facade is on the
       packages = pkgs: {
         hello = pkgs.callPackage ./pkgs/hello { };
       };
-
-      devShells = pkgs: {
-        default = pkgs.mkDevShell {
-          packages = [ pkgs.gcc pkgs.gnumake ];
-        };
-      };
     };
 }
 ```
 
-## `pkgs/hello/default.nix`
+:::{caution}
+Call it as `corepkgs.lib.mkFlake`, not `corepkgs.mkFlake`. The facade is on the
+`lib` output, and the root form fails with `attribute 'mkFlake' missing`.
+:::
 
-The package, in its own file. `callPackage` supplies `lib` and `stdenv` from the
-set, so this file declares only what it uses.
+The package is its own file. `callPackage` supplies `lib` and `stdenv` from the
+set, so it declares only what it uses.
 
 ```{code-block} nix
 :filename: pkgs/hello/default.nix
@@ -79,9 +74,7 @@ stdenv.mkDerivation {
 }
 ```
 
-## `pkgs/hello/hello.c`
-
-Its source, beside it.
+Its source sits beside it.
 
 ```{code-block} c
 :filename: pkgs/hello/hello.c
@@ -94,32 +87,22 @@ int main(void) {
 }
 ```
 
-## Build it
-
 ```console
 $ nix build .#hello
 $ ./result/bin/hello
 hello from corepkgs
-$ nix develop
 ```
 
-## A dev shell without a package
+## Get a development shell
 
-The same file without the `packages` output — for a repository that only wants
-the toolchain:
+The tools you work in, with no package built. This is the same file with a
+`devShells` output in place of `packages`, and nothing under `pkgs/`:
 
 ```{code-block} nix
 :filename: flake.nix
 
 {
-  inputs.corepkgs.url = "github:ekala-project/corepkgs";
-
-  nixConfig = {
-    extra-substituters = [ "https://ekala-corepkgs.cachix.org" ];
-    extra-trusted-public-keys = [
-      "ekala-corepkgs.cachix.org-1:DcZV+vegWoEzacbSdXFXU4S7728C0eS9RfGpKeyHd6w="
-    ];
-  };
+  # The same `inputs` and `nixConfig` as above.
 
   outputs =
     { corepkgs, ... }:
@@ -131,4 +114,8 @@ the toolchain:
       };
     };
 }
+```
+
+```console
+$ nix develop
 ```
