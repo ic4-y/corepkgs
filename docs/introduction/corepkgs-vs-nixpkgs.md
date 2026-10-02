@@ -6,7 +6,7 @@ reasoning, so a reader who finds nixpkgs behaving differently knows why.
 ## Stdenv
 
 The stdenv **differs substantially**. It is the reason this project exists; see
-[Stdenv](../stdenv/README.md) for its defaults, its supported platforms and the
+[Corepkgs stdenv](../stdenv/README.md) for its defaults, its platforms and the
 Darwin port.
 
 ## Unfree packages

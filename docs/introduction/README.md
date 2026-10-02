@@ -20,7 +20,7 @@ your own, or building something that has to sit below the rest — start with
 flake that takes corepkgs as an input, and the same thing pinned with `npins`.
 
 **If you are working in corepkgs** — packaging a new version, fixing a failed
-build, or deciding whether a change belongs here — read [Stdenv](../stdenv/README.md)
+build, or deciding whether a change belongs here — read [Corepkgs stdenv](../stdenv/README.md)
 first, then [Building Packages](../building-packages/README.md). The stdenv page
 comes first because two of its defaults cause failures that look like something
 else entirely.

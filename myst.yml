@@ -29,9 +29,12 @@ project:
         - file: docs/using-corepkgs/inputless-flake.md
         - file: docs/using-corepkgs/npins.md
         - file: docs/using-corepkgs/binary-cache.md
-    - title: Stdenv
+    - title: Corepkgs stdenv
       children:
         - file: docs/stdenv/README.md
+        - file: docs/stdenv/differences.md
+        - file: docs/stdenv/platforms.md
+        - file: docs/stdenv/darwin.md
     - title: Building Packages
       children:
         - file: docs/building-packages/README.md

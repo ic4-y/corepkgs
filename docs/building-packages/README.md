@@ -24,4 +24,4 @@ are worth knowing before you read a symptom:
 - **`doCheck` is off.** A package's tests do not run as part of its build, so a
   test failure is not what broke your update.
 
-Both are described in [Stdenv](../stdenv/README.md).
+Both are described in [Corepkgs stdenv](../stdenv/README.md).

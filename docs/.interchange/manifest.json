@@ -43,6 +43,21 @@
       "file": "stdenv.json"
     },
     {
+      "slug": "stdenv-differences",
+      "location": "/docs/stdenv/differences.md",
+      "file": "stdenv-differences.json"
+    },
+    {
+      "slug": "stdenv-platforms",
+      "location": "/docs/stdenv/platforms.md",
+      "file": "stdenv-platforms.json"
+    },
+    {
+      "slug": "stdenv-darwin",
+      "location": "/docs/stdenv/darwin.md",
+      "file": "stdenv-darwin.json"
+    },
+    {
       "slug": "building-packages",
       "location": "/docs/building-packages/README.md",
       "file": "building-packages.json"
