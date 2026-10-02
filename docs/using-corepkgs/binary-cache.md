@@ -38,7 +38,7 @@ $ nix-build --option substituters https://ekala-corepkgs.cachix.org \
             --option trusted-public-keys "ekala-corepkgs.cachix.org-1:DcZV+vegWoEzacbSdXFXU4S7728C0eS9RfGpKeyHd6w="
 ```
 
-```{code-block} text
+```{code-block} ini
 :filename: /etc/nix/nix.conf
 
 substituters = https://ekala-corepkgs.cachix.org
