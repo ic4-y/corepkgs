@@ -54,6 +54,7 @@ minutes and was still building** without the cache, and **2.9 seconds** with it.
 
 The cache is a personal server and should be treated as untrusted.
 
-It is also **incomplete** — a build with it declared still compiled `pkg-config`
-and `glibc` when the cache lacked them — so declaring it means "build only what
-is missing" rather than "build nothing".
+It also does not hold every package: declaring it means "build only what is
+missing", not "build nothing". If you find a common development package the cache
+is missing, [open an issue](https://github.com/ekala-project/corepkgs/issues) and
+it can be added.
