@@ -39,7 +39,7 @@ The stdenv is small, and each part is a directory you can read:
 `generic/default.nix` picks a stdenv for the platform. `make-derivation.nix` is
 where the defaults live — the file the [differences](differences.md) page quotes.
 
-## Why corepkgs replaces it
+## What corepkgs does differently
 
 Two properties account for most of the difference.
 
@@ -48,11 +48,3 @@ them on `PATH` by accident. A dependency becomes a fact about the expression.
 
 It is **more parallel**. Building, checking and installing all use `-j` by
 default, because that is what you want on the machine doing the work.
-
-## Pages
-
-- [Differences from nixpkgs](differences.md) — the six defaults, each with the
-  code that sets it.
-- [Platforms](platforms.md) — what it builds on, and building it yourself.
-- [Darwin](darwin.md) — the port: updating LLVM, the names that moved, what is
-  not verified.
