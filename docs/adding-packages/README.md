@@ -199,3 +199,6 @@ Then build one:
 ```console
 $ nix-build -A mtdev
 ```
+
+`nix-build` prints the store path it built and leaves `./result` pointing at it, so
+`ls result/` is the package you just added.

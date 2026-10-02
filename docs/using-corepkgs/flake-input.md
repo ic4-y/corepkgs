@@ -93,6 +93,9 @@ $ ./result/bin/hello
 hello from corepkgs
 ```
 
+The build leaves the package in `./result`, a symlink into the store, and running
+it prints the greeting — so both the build and the program are confirmed.
+
 ## Get a development shell
 
 The tools you work in, with no package built. This is the same file with a
@@ -119,3 +122,5 @@ The tools you work in, with no package built. This is the same file with a
 ```console
 $ nix develop
 ```
+
+A shell with `gcc` and `make` on `PATH`. `exit` leaves it.

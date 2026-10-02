@@ -32,6 +32,10 @@ $ nix run nixpkgs#npins -- -d npins init
 $ nix run nixpkgs#npins -- -d npins add github ekala-project corepkgs --name corepkgs
 ```
 
+Two files appear: `npins/default.nix`, which knows how to fetch a pin, and
+`npins/sources.json`, which records which revision of corepkgs you asked for. That
+second file is the one to commit.
+
 ## Build a package
 
 `default.nix` reads the pin and names what this repository builds.
@@ -56,6 +60,9 @@ $ nix-build -A hello
 $ ./result/bin/hello
 hello from corepkgs
 ```
+
+`nix-build` leaves the package in `./result`, a symlink into the store, and
+running it prints the greeting.
 
 :::{caution}
 There is no `pkgs.mkShell` in corepkgs, though it is the constructor nixpkgs users
@@ -82,3 +89,6 @@ pkgs.mkDevShell {
 ```console
 $ nix-shell
 ```
+
+A shell with `gcc` and `make` on `PATH`. `exit` leaves it and returns you to your
+own shell.

@@ -80,6 +80,9 @@ $ nix build .#hello
 $ nix develop
 ```
 
+The build leaves `hello` in `./result`. The second command opens a shell with
+`gcc` and `make` available.
+
 ## Get a development shell
 
 The same file with the `packages` output removed — for a repository that only
@@ -115,6 +118,9 @@ wants the toolchain:
 ```console
 $ nix develop
 ```
+
+A shell with the toolchain on `PATH`, reached without resolving a single flake
+input.
 
 ## What the trade costs
 

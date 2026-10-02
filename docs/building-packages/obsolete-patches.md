@@ -27,6 +27,9 @@ Hunk #1 FAILED at 25.
 1 out of 1 hunk FAILED -- saving rejects to file src/foo.c.rej
 ```
 
+The build stops here. The patch was not applied, and Nix writes the part it could
+not place to `src/foo.c.rej` so you can see what the source now has instead.
+
 ## The fix
 
 Remove the patch from the `patches` list, and remove the `fetchpatch` or

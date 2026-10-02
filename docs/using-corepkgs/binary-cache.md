@@ -31,12 +31,17 @@ that names corepkgs as an input. This is where you put them:
 ## Without flakes
 
 A project using [`npins`](npins.md) has no `flake.nix`, so it declares the same
-two values per command, or once in `nix.conf`:
+two values per command — the substitute applies to that one command and nothing is
+written down — or once in `nix.conf`, which applies to every command afterwards:
 
 ```console
 $ nix-build --option substituters https://ekala-corepkgs.cachix.org \
             --option trusted-public-keys "ekala-corepkgs.cachix.org-1:DcZV+vegWoEzacbSdXFXU4S7728C0eS9RfGpKeyHd6w="
 ```
+
+That build downloads what the cache holds and builds only the rest. Nothing about
+it is remembered, so the next command needs the options again — which is what the
+file below avoids:
 
 ```{code-block} ini
 :filename: /etc/nix/nix.conf
