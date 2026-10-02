@@ -8,7 +8,7 @@ the stdenv's behaviour shows up in nearly every build.
 corepkgs replaces nixpkgs' stdenv with its own. It is what the rest of the
 package set is built on, and it is the reason this project exists.
 
-## How it differs, and why
+## What makes it different
 
 Two properties account for most of the difference, and most of the surprises when
 a package is brought over from nixpkgs.
@@ -23,11 +23,11 @@ default, because that is what you want on the machine doing the work.
 Both are deliberate: the goal is a stdenv that is explicit about what a build
 needs, and that uses the machine it is given.
 
-| Page | What it covers |
-| --- | --- |
-| [Differences from nixpkgs](differences.md) | The six defaults that differ, and the one that breaks packages most often. |
-| [Platforms](platforms.md) | What it builds on, and building it yourself. |
-| [Darwin](darwin.md) | The Darwin port: updating LLVM, the names that moved, and what is not verified. |
+- [Differences from nixpkgs](differences.md) — the six defaults that differ, and
+  the one that breaks packages most often.
+- [Platforms](platforms.md) — what it builds on, and building it yourself.
+- [Darwin](darwin.md) — the port: updating LLVM, the names that moved, and what is
+  not verified.
 
 The code lives in `stdenv/`, which holds the stdenv, the spliced packages, and the
 construction of the package set from a set of overlays.

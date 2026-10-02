@@ -1,17 +1,22 @@
 # Npins
 
-corepkgs can be used without flakes: `npins` pins it and the files below import
-that pin, so nothing here is a flake.
+**Use this if your project does not use flakes.** `npins` pins corepkgs and your
+Nix files import that pin, so nothing here is a flake and nothing needs
+`flake.lock`.
 
-`default.nix` reads the pin, and the package lives in its own file exactly as it
-does under the flake:
+Run these once, in the repository's root, to create the pin:
 
 ```console
 $ nix run nixpkgs#npins -- -d npins init
 $ nix run nixpkgs#npins -- -d npins add github ekala-project corepkgs --name corepkgs
 ```
 
-```nix
+`default.nix` reads the pin, and the package lives in its own file exactly as it
+does under the flake:
+
+```{code-block} nix
+:filename: default.nix
+
 let
   sources = import ./npins;
   pkgs = import sources.corepkgs { system = builtins.currentSystem; };
@@ -28,7 +33,9 @@ reach for. The equivalent here is `pkgs.mkDevShell`.
 
 `shell.nix`:
 
-```nix
+```{code-block} nix
+:filename: shell.nix
+
 let
   sources = import ./npins;
   pkgs = import sources.corepkgs { system = builtins.currentSystem; };

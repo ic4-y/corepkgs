@@ -3,14 +3,18 @@
 Six defaults differ from nixpkgs. Each is a deliberate change, and the first two
 are the ones most likely to surprise a package brought over from nixpkgs.
 
-| Difference | What it means |
-| --- | --- |
-| `stdenv.isCross` is defined | The attribute exists here; upstream leaves it absent on a native build. |
-| `strictDeps` defaults to `true` | Build inputs and host inputs are kept apart, so a build that reaches for a program it did not declare fails rather than quietly finding it on `PATH`. |
-| `__structuredAttrs` defaults to `true` | Derivation attributes are arrays, not space-separated strings. |
-| `enableParallelBuilding` defaults to `true` | Builds use `-j` without being asked. |
-| `enableParallelChecking` defaults to `true` | Test phases run in parallel too. |
-| `enableParallelInstalling` defaults to `true` | Install phases likewise. |
+**`strictDeps = true`** — build inputs and host inputs are kept apart. A build that
+reaches for a program it did not declare fails, rather than quietly finding it on
+`PATH`.
+
+**`__structuredAttrs = true`** — derivation attributes are arrays, not
+space-separated strings.
+
+**`isCross` is defined** — the attribute exists here. Upstream leaves it absent on
+a native build.
+
+**`enableParallelBuilding`, `enableParallelChecking`, `enableParallelInstalling`**
+all default to `true` — builds, tests and installs use `-j` without being asked.
 
 ## `strictDeps` breaks builds that relied on `PATH`
 

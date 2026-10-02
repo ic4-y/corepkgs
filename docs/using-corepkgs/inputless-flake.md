@@ -1,8 +1,8 @@
 # Inputless flakes
 
-The flake CLI, without flake inputs. `nix develop`, `nix build` and `nix flake
-show` all work as usual, and nothing is resolved: `npins` pins corepkgs, and the
-flake reads that pin.
+**Use this if you want the flake CLI without flake inputs.** `nix develop`,
+`nix build` and `nix flake show` all work as usual, but nothing is resolved:
+`npins` pins corepkgs and the `flake.nix` reads that pin.
 
 :::{tip}
 A flake input also brings in corepkgs' own inputs — `nix-lib`, `treefmt-nix`,
@@ -17,7 +17,9 @@ doing so.
 
 `flake.nix`:
 
-```nix
+```{code-block} nix
+:filename: flake.nix
+
 {
   outputs =
     { self }:

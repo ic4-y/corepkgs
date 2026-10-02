@@ -6,10 +6,18 @@ there are no Intel bootstrap files upstream.
 
 ## Updating LLVM
 
-Update `llvmPackages` for Darwin in `top-level.nix` to match
-`llvmPackages.latest`. This is timed against LLVM's release schedule: use the
-spring release, and once `llvmPackages.latest` has been moved to match. If LLVM
-has announced patch releases, wait until those land in nixpkgs before updating.
+Move Darwin's `llvmPackages` in `top-level.nix` to match `llvmPackages.latest` —
+a one-line change:
+
+```{code-block} nix
+:filename: top-level.nix
+
+llvmPackages = if stdenv.hostPlatform.isDarwin then llvmPackages_21 else llvm.pkgs;
+```
+
+This is timed against LLVM's release schedule: use the spring release, and once
+`llvmPackages.latest` has been moved to match. If LLVM has announced patch
+releases, wait until those land in nixpkgs before updating.
 
 Then fix what breaks. Most breakage is additional warnings turned into errors, or
 extra strictness LLVM applies. Where the fix is trivial — a missing `int` in an
@@ -26,14 +34,12 @@ be updated first.
 
 Several attributes differ from their nixpkgs spellings:
 
-| Upstream attribute | corepkgs attribute |
-| --- | --- |
-| `darwin.binutils` | `binutils` |
-| `darwin.binutils-unwrapped` | `binutils.unwrapped` |
-| `darwin.binutilsNoLibc` | `binutils.noLibc` |
-| `darwin.libffi` | `libffi` |
-| `darwin.libpcap` | `libpcap.apple` |
-| `darwin.locale` (locale data) | `locale.data` |
+- `darwin.binutils` → `binutils`
+- `darwin.binutils-unwrapped` → `binutils.unwrapped`
+- `darwin.binutilsNoLibc` → `binutils.noLibc`
+- `darwin.libffi` → `libffi`
+- `darwin.libpcap` → `libpcap.apple`
+- `darwin.locale` (locale data) → `locale.data`
 
 `aliases/nixpkgs.nix` provides the compatibility names — `libffiReal`,
 `libiconvReal` and the former flat binutils names among them — and

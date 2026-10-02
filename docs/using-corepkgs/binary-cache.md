@@ -1,8 +1,8 @@
 # Binary cache
 
-corepkgs publishes its build outputs to a binary cache, and every consumer should
-declare it. Not declaring it does not fail; the consumer builds a compiler from
-source instead.
+**Every consumer should declare this.** corepkgs publishes its build outputs to a
+binary cache. Omitting it does not fail, but the first build compiles a compiler
+from source instead of downloading one.
 
 :::{caution}
 Declare the cache before your first build. `nixConfig` is not inherited across a
@@ -13,7 +13,9 @@ flake input or a pin, so a consumer that omits it compiles a compiler from sourc
 Declare it in the `flake.nix` that consumes corepkgs — this is the input route,
 but every consumer needs the same two values:
 
-```nix
+```{code-block} nix
+:filename: flake.nix
+
 nixConfig = {
   extra-substituters = [ "https://ekala-corepkgs.cachix.org" ];
   extra-trusted-public-keys = [

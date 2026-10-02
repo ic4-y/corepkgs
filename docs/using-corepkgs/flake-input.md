@@ -1,7 +1,7 @@
 # Flakes
 
-Use this when your project already uses flakes. `corepkgs.lib.mkFlake` builds the
-output structure, so your `flake.nix` states only what you add.
+**Use this if your project already uses flakes.** `corepkgs.lib.mkFlake` builds
+the output structure, so your `flake.nix` states only what you add.
 
 :::{caution}
 Call it as `corepkgs.lib.mkFlake`, not `corepkgs.mkFlake`. The facade is on the
@@ -10,7 +10,9 @@ Call it as `corepkgs.lib.mkFlake`, not `corepkgs.mkFlake`. The facade is on the
 
 `flake.nix`:
 
-```nix
+```{code-block} nix
+:filename: flake.nix
+
 {
   inputs.corepkgs.url = "github:ekala-project/corepkgs";
 
@@ -40,7 +42,9 @@ Call it as `corepkgs.lib.mkFlake`, not `corepkgs.mkFlake`. The facade is on the
 The package lives in its own file. `callPackage` supplies `lib` and `stdenv`
 from the set, so the file declares only what it uses — `pkgs/hello/default.nix`:
 
-```nix
+```{code-block} nix
+:filename: pkgs/hello/default.nix
+
 { lib, stdenv }:
 
 stdenv.mkDerivation {
@@ -55,7 +59,9 @@ stdenv.mkDerivation {
 
 `pkgs/hello/hello.c`, beside it:
 
-```c
+```{code-block} c
+:filename: pkgs/hello/hello.c
+
 #include <stdio.h>
 
 int main(void) {
@@ -73,10 +79,12 @@ $ nix develop
 
 ## A dev shell without a package
 
-The same `flake.nix` without the `packages` output — for a repository that only
-wants the toolchain:
+The same file without the `packages` output — for a repository that only wants
+the toolchain:
 
-```nix
+```{code-block} nix
+:filename: flake.nix
+
 {
   inputs.corepkgs.url = "github:ekala-project/corepkgs";
 
