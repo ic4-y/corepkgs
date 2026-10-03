@@ -176,11 +176,19 @@ def is_doc_ref:
   and ((.urlSource | startswith("//")) | not)
   and ((.urlSource | test("^[A-Za-z][A-Za-z0-9+.-]*:")) | not);
 
-([.. | objects | select(.type == "link") | select(is_doc_ref) | resolve($dir; doc_path)] | unique) as $targets
+# A CARRIER is a node whose destination is a document reference. A `link` is one; a `card` is the
+# other, because `:::{card}` takes `:link:` and the parser keeps the source path in `urlSource`
+# exactly as it does for a link. Both are re-pointed by the same two rules below: a card's
+# destination is as routable a fact as a link's, and a card pointing at a page this set does not
+# carry is the same dead end.
+def carries_ref:
+  ((.type == "link") or (.type == "card")) and is_doc_ref;
+
+([.. | objects | select(carries_ref) | resolve($dir; doc_path)] | unique) as $targets
 | {
     unresolved: [$targets[] | . as $t | select(($pages | index($t)) == null) | $t],
     artifact: walk(
-      if type == "object" and .type == "link" and is_doc_ref then
+      if type == "object" and carries_ref then
         resolve($dir; doc_path) as $r
         | if ($pages | index($r)) then
             .url = ("/" + slug_of($r) + (if (fragment) != "" then "#" + (fragment) else "" end))

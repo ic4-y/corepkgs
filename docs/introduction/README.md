@@ -9,22 +9,6 @@ and the module-system behaviour that everything else builds on.
 The narrower scope is the point. A smaller surface means updates land more often
 and cause **less rebuild churn** than something the size of nixpkgs.
 
-## Two kinds of reader
-
-These pages serve two audiences. Almost everything downstream depends on which
-one you are.
-
-**If you are consuming corepkgs** — using it as the base for a package set of
-your own, or building something that has to sit below the rest — start with
-[Using corepkgs](../using-corepkgs/README.md). It covers the binary cache, a
-flake that takes corepkgs as an input, and the same thing pinned with `npins`.
-
-**If you are working in corepkgs** — adding a package, fixing a failed build, or
-deciding whether a change belongs here — read [Corepkgs stdenv](../stdenv/README.md)
-first, then [Adding Packages](../adding-packages/README.md). The stdenv page comes
-first because two of its defaults cause failures that look like something else
-entirely, and you will meet them the first time you add something.
-
 ## Guiding principles
 
 These are the standing preferences behind the decisions recorded in these pages:
@@ -37,3 +21,24 @@ These are the standing preferences behind the decisions recorded in these pages:
   configuration at all.
 - **Automation over manual.** If a step can be performed by a tool, it should not
   be a step a person remembers.
+
+## What's next
+
+These pages serve two audiences. Almost everything downstream depends on which one
+you are.
+
+::::{grid}
+:::{card} Use corepkgs
+:link: ../using-corepkgs/README.md
+
+Building something on top of it — a package set of your own, or a flake that
+takes corepkgs as an input.
+:::
+
+:::{card} Work on corepkgs
+:link: ../adding-packages/README.md
+
+Adding a package, or fixing a build that broke. Start with the stdenv: two of its
+defaults cause failures that look like something else.
+:::
+::::
