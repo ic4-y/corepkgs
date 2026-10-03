@@ -1,0 +1,51 @@
+version: 1
+project:
+  title: corepkgs
+  # THE PARTICIPATING PAGE SET, named explicitly. Without a toc the emitter walks every
+  # markdown file in the repository — 33 of them — and 20 share the basename README.md, so
+  # they collide into readme.json plus readme-1..19.json. A page's identity must come from
+  # where it lives, not from its filename.
+  #
+  # A GROUP'S FIRST PAGE IS ITS OWN INDEX, which is what makes the group's heading and its
+  # first entry the same place: a reader clicking a group's name arrives at its overview and
+  # the submenu opens around them, rather than the label and the entry naming two different
+  # things. MyST requires the first toc item to be a file, so a group's index leads and its
+  # group follows.
+  #
+  # THE GROUPS FOLLOW THE READER'S QUESTION, in the order they ask it: what is this, how do I
+  # use it, what does the standard environment do to my build, and how do I fix a build that
+  # broke. Stdenv sits between using and building because both audiences need it — a consumer
+  # wants to know what `strictDeps` will do, and a package author wants to know why the
+  # failure looks the way it does.
+  toc:
+    - file: docs/introduction/README.md
+    - title: Introduction
+      children:
+        - file: docs/introduction/corepkgs-vs-nixpkgs.md
+    - title: Using corepkgs
+      children:
+        - file: docs/using-corepkgs/README.md
+        - file: docs/using-corepkgs/flake-input.md
+        - file: docs/using-corepkgs/inputless-flake.md
+        - file: docs/using-corepkgs/npins.md
+        - file: docs/using-corepkgs/binary-cache.md
+    - title: Corepkgs stdenv
+      children:
+        - file: docs/stdenv/README.md
+        - file: docs/stdenv/differences.md
+        - file: docs/stdenv/platforms.md
+        - file: docs/stdenv/darwin.md
+    - title: Adding Packages
+      children:
+        - file: docs/adding-packages/README.md
+    - title: Common Problems
+      children:
+        - file: docs/building-packages/README.md
+        - file: docs/building-packages/obsolete-patches.md
+        - file: docs/building-packages/dependency-failures.md
+        - file: docs/building-packages/compiler-errors.md
+        - file: docs/building-packages/cmake-packages.md
+        - file: docs/building-packages/python-packages.md
+        - file: docs/building-packages/rust-packages.md
+site:
+  template: ./docs-site-template

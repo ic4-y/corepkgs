@@ -13,6 +13,7 @@ shebang and is meant to be run from the repository root:
 | [`sync-with-nixpkgs/sync.py`](#sync-with-nixpkgs) | Report how corepkgs diverges from a nixpkgs checkout |
 | [`repology/generate.sh`](#repology) | Produce a Repology-compatible `packages.json` metadata dump |
 | [`bootstrap-files/upload-bootstrap.sh`](bootstrap-files/README.md) | Upload stdenv bootstrap tarballs |
+| [`docs-pipeline.sh`](#docs-pipeline) | Emit, stamp and gate the published documentation artifact |
 | `ci-jobs.nix` | Job-set entry point (`import ../. { }`) |
 
 ## freeze-release
@@ -184,3 +185,77 @@ Generates a Repology-compatible `packages.json` metadata dump.
 
 `packages-info.nix` evaluates a single package by attribute name and returns its
 metadata; `generate.sh` calls it once per package and merges the results.
+
+## docs-pipeline
+
+Emits the site's documentation artifact from the markdown under `docs/`, stamps each page, and —
+in `--check` mode — fails if the committed artifact and a fresh parse disagree. This is the tool
+that makes the published documentation a *checked* artifact rather than a copy.
+
+```bash
+nix develop .#default -c bash scripts/docs-pipeline.sh --write    # write docs/.interchange/
+nix develop .#default -c bash scripts/docs-pipeline.sh --check    # gate (CI and hooks)
+```
+
+Run both modes through the devshell: the emitter (`myst`) and the validator (`validate`) are not
+on PATH otherwise. `--check` exits 0 when the committed artifacts are byte-equal to a fresh
+emission, the manifest matches the page set, and every page carries the pinned format version;
+1 on any difference or vocabulary finding.
+
+### What is committed
+
+| Path                                | What it is                                                          |
+| ----------------------------------- | ------------------------------------------------------------------- |
+| `docs/.interchange/<slug>.json`     | one page, canonical mdast, with `docs_format` and `parser_version`  |
+| `docs/.interchange/manifest.json`   | the page set: each page's slug, source path and file                |
+
+The manifest is what lets the site enumerate a repository's pages without listing a directory —
+`raw.githubusercontent.com` cannot list one. The artifact is committed because the site reads
+committed JSON and nothing else: it never runs a parser, never invokes the validator and never
+fetches at build time.
+
+Files are named by **slug**, derived from the source path (`docs/common-issues/README.md` ->
+`common-issues.json`), not from the emitter's filename. Identity comes from where a page lives:
+the emitter names its first toc entry `index.json` regardless of which page that is, and
+twenty `README.md` files in this repository share a basename, so filename-derived identity both
+misnames and collides.
+
+### The published pages
+
+A page is a markdown file under `docs/` named in the `project.toc` of `myst.yml`. The toc is the
+page set, explicit and ordered: the emitter otherwise walks every markdown file in the
+repository, twenty of which are `README.md` files that collide into one name.
+
+### Changing a page
+
+Edit the markdown, then regenerate and commit the artifact alongside it:
+
+```bash
+nix develop .#default -c bash scripts/docs-pipeline.sh --write
+git add docs/ && git commit
+```
+
+A page edited without regenerating fails `--check`, and so do a JSON edited by hand, a dropped
+manifest entry and a stale artifact. All of it is caught by `docs-pipeline.sh --check` in the
+`docs` CI job. The bundled `.githooks/pre-commit` and `.githooks/pre-push` run the same check
+earlier, for contributors who have opted in with `git config core.hooksPath .githooks` — hooks
+are advisory, and CI is the enforcing surface.
+
+### The format version
+
+Two versions are stamped, and neither is the emitter's own `version` field (which describes the
+parser's wire format and changes when the parser does):
+
+- **`docs_format`** — the version of the page format this repository emits, read from the pinned
+  validator rather than restated anywhere. Each page carries it so a repository pinned to an
+  older format finds out in its own build: `--check` names the repository that must regenerate.
+- **`parser_version`** — the emitter that produced the page, for provenance.
+
+### Authoring the pages
+
+Two things the validator enforces on the page set itself:
+
+- Every page needs a **title** — from a leading `# Heading`. A file of prose with no heading has
+  no title, and the reader-facing surfaces depend on it.
+- Every node must be one the site can render. An unknown node fails the build rather than
+  degrading the page, so a parser upgrade cannot silently drop content.

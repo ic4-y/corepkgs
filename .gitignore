@@ -9,3 +9,12 @@ __pycache__/
 !AGENTS.md
 !CLAUDE.md
 !README.md
+
+# The emitter's working directory. Its CONTENT is not committed — the committed artifact is
+# docs/.interchange/ below — so this is build output like any other.
+/_build/
+
+# The committed interchange artifact (docs/dag/pr-dag.json -> ContentFormat). It IS tracked:
+# the site consumes committed JSON and nothing else (invariant 18), and `docs-format-check.sh`
+# gates it by byte-equality against a fresh parse. Note `*.md` above does not reach it — these
+# are .json — but `!docs/**` is what keeps the directory itself visible if that ever changes.

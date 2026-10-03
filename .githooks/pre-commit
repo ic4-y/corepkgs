@@ -43,3 +43,29 @@ if [ "${#to_restage[@]}" -gt 0 ]; then
   printf '  %s\n' "${to_restage[@]}"
   git add -- "${to_restage[@]}"
 fi
+
+# ── The docs content gate (docs/dag/pr-dag.json -> ContentFormat) ──────────────────────────
+#
+# ADVISORY, and explicitly NOT the surface the content contract rests on: activation is opt-in
+# (`git config core.hooksPath .githooks`), the README does not mention it, and a hook is
+# bypassable with `--no-verify` or absent on a fresh clone. CI is the enforcing surface; this
+# exists so a contributor sees the failure before pushing.
+#
+# It runs only when a page or a committed artifact is staged, because it emits the whole page
+# set and is not cheap enough to run on every commit.
+docs_staged=()
+for f in "${existing[@]}"; do
+  case "$f" in
+    docs/*.md|docs/*/*.md|docs/.interchange/*|myst.yml|docs-site-template/*) docs_staged+=("$f") ;;
+  esac
+done
+
+if [ "${#docs_staged[@]}" -gt 0 ]; then
+  echo "pre-commit: running the content-format gate (${#docs_staged[@]} docs file(s) staged)"
+  # Invoked through the devshell, because the validator and the emitter both come from it.
+  if ! nix develop .#default -c bash scripts/docs-pipeline.sh --check; then
+    echo "pre-commit: the content-format gate failed — regenerate the JSON with the pinned parser:" >&2
+    echo "  nix develop .#default -c bash scripts/docs-pipeline.sh --write" >&2
+    exit 1
+  fi
+fi
