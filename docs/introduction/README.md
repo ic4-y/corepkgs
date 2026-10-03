@@ -31,14 +31,12 @@ you are.
 :::{card} Use corepkgs
 :link: ../using-corepkgs/README.md
 
-Building something on top of it — a package set of your own, or a flake that
-takes corepkgs as an input.
+As the base for a package set of your own, or as a flake input.
 :::
 
 :::{card} Work on corepkgs
 :link: ../adding-packages/README.md
 
-Adding a package, or fixing a build that broke. Start with the stdenv: two of its
-defaults cause failures that look like something else.
+Adding a package, or fixing a build that broke. Start with the stdenv.
 :::
 ::::
