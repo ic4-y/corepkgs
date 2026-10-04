@@ -22,6 +22,7 @@ project:
     - title: Introduction
       children:
         - file: docs/introduction/corepkgs-vs-nixpkgs.md
+        - file: docs/introduction/corepkgs-vs-ekapkgs.md
     - title: Using corepkgs
       children:
         - file: docs/using-corepkgs/README.md

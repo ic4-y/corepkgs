@@ -13,6 +13,11 @@
       "file": "introduction-corepkgs-vs-nixpkgs.json"
     },
     {
+      "slug": "introduction-corepkgs-vs-ekapkgs",
+      "location": "/docs/introduction/corepkgs-vs-ekapkgs.md",
+      "file": "introduction-corepkgs-vs-ekapkgs.json"
+    },
+    {
       "slug": "using-corepkgs",
       "location": "/docs/using-corepkgs/README.md",
       "file": "using-corepkgs.json"

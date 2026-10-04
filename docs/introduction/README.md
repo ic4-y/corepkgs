@@ -1,10 +1,12 @@
 # Introduction
 
-corepkgs is the package set behind Ekala: the common development concerns a
-nixpkgs fork needs, kept **deliberately narrower than nixpkgs itself**.
+corepkgs is the **core package set** behind Ekala: the common development
+concerns a nixpkgs fork needs, kept **deliberately narrower than nixpkgs
+itself**. Ekapkgs is the larger set, aggregating corepkgs and the satellite
+ecosystems into one entrypoint; corepkgs is the base the rest builds on.
 
 It supplies the stdenv, the compilers and interpreters, the language ecosystems,
-and the module-system behaviour that everything else builds on.
+and the module-system behaviour that everything else depends on.
 
 The narrower scope is the point. A smaller surface means updates land more often
 and cause **less rebuild churn** than something the size of nixpkgs.
