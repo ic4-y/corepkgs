@@ -50,6 +50,21 @@ top-level.nix # Overlay for specifying overrides at `pkgs` scope
 default.nix   # Entry point for people to import
 ```
 
+## Documentation
+
+The documentation published for this repository is authored in markdown under `docs/` and
+committed as a validated artifact in `docs/.interchange/`. Both halves are gated: a page edited
+without regenerating its artifact fails, and so does an artifact edited by hand.
+
+```bash
+nix develop .#default -c bash scripts/docs-pipeline.sh --write    # regenerate the artifact
+nix develop .#default -c bash scripts/docs-pipeline.sh --check    # validate
+```
+
+See [`scripts/README.md`](./scripts/README.md#docs-pipeline) for the authoring and regeneration
+workflow, and [`docs/major-differences-nixpkgs.md`](./docs/major-differences-nixpkgs.md) for the
+documentation itself.
+
 ## Binary cache
 
 *WARNING*: This is a personal server, and should be considered untrusted
@@ -58,3 +73,40 @@ default.nix   # Entry point for people to import
 substituters = https://ekala-corepkgs.cachix.org
 trusted-public-keys = ekala-corepkgs.cachix.org-1:DcZV+vegWoEzacbSdXFXU4S7728C0eS9RfGpKeyHd6w=
 ```
+
+### Consuming this repository: re-declare the cache
+
+`nixConfig` is **not inherited across a flake input or an `npins` pin**, so a repository that
+consumes corepkgs does not get these substituters automatically and will build the package set
+from source instead of substituting it. Re-declare both keys in the consumer's own `flake.nix`:
+
+```nix
+nixConfig = {
+  extra-substituters = [ "https://ekala-corepkgs.cachix.org" ];
+  extra-trusted-public-keys = [ "ekala-corepkgs.cachix.org-1:DcZV+vegWoEzacbSdXFXU4S7728C0eS9RfGpKeyHd6w=" ];
+};
+```
+
+This applies to the docs tooling too, and there it is measurable rather than theoretical:
+`mystmd` is on `cache.nixos.org`, but the `content-format` validator is on **neither**
+`cache.nixos.org` nor this cache unless CI has pushed it. A consumer that pins this repository
+and does not re-declare the cache builds the validator from source on every CI run.
+
+### Populating the cache
+
+**Nothing populates it from this repository yet.** A `cachix-action` push was written for all three
+CI jobs and removed, because the `CACHIX_AUTH_TOKEN` is not available; the steps were skipped on
+every run, so they only documented an intent.
+
+What that costs, measured: `mystmd` substitutes from `cache.nixos.org` regardless, but the
+`content-format` validator is on neither that cache nor this one, so a consumer pinning this
+repository builds it from source on every CI run. Adding the token to the three jobs (the shape is
+in this file's history) is what closes that.
+
+### The pinned content-format input is private
+
+The `ekala-org` flake input (the validator) lives in a private repository. A public fork's runner
+cannot fetch it, so the `docs` job fails at flake evaluation — `program 'git' failed with exit
+code 128` — before the gate runs. The `docs` job authenticates through a **`FORMAT_ARTIFACT_TOKEN`
+secret** when one is set and skips that step when it is not, so the failure is attributable. This
+is dev tooling only; it does not affect `lint` or `eval`, which pass without it.

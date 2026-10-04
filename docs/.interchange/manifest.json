@@ -1,0 +1,106 @@
+{
+  "docs_format": 1,
+  "parser_version": "1.9.1",
+  "pages": [
+    {
+      "slug": "introduction",
+      "location": "/docs/introduction/README.md",
+      "file": "introduction.json"
+    },
+    {
+      "slug": "introduction-corepkgs-vs-nixpkgs",
+      "location": "/docs/introduction/corepkgs-vs-nixpkgs.md",
+      "file": "introduction-corepkgs-vs-nixpkgs.json"
+    },
+    {
+      "slug": "introduction-corepkgs-vs-ekapkgs",
+      "location": "/docs/introduction/corepkgs-vs-ekapkgs.md",
+      "file": "introduction-corepkgs-vs-ekapkgs.json"
+    },
+    {
+      "slug": "using-corepkgs",
+      "location": "/docs/using-corepkgs/README.md",
+      "file": "using-corepkgs.json"
+    },
+    {
+      "slug": "using-corepkgs-flake-input",
+      "location": "/docs/using-corepkgs/flake-input.md",
+      "file": "using-corepkgs-flake-input.json"
+    },
+    {
+      "slug": "using-corepkgs-inputless-flake",
+      "location": "/docs/using-corepkgs/inputless-flake.md",
+      "file": "using-corepkgs-inputless-flake.json"
+    },
+    {
+      "slug": "using-corepkgs-npins",
+      "location": "/docs/using-corepkgs/npins.md",
+      "file": "using-corepkgs-npins.json"
+    },
+    {
+      "slug": "using-corepkgs-binary-cache",
+      "location": "/docs/using-corepkgs/binary-cache.md",
+      "file": "using-corepkgs-binary-cache.json"
+    },
+    {
+      "slug": "stdenv",
+      "location": "/docs/stdenv/README.md",
+      "file": "stdenv.json"
+    },
+    {
+      "slug": "stdenv-differences",
+      "location": "/docs/stdenv/differences.md",
+      "file": "stdenv-differences.json"
+    },
+    {
+      "slug": "stdenv-platforms",
+      "location": "/docs/stdenv/platforms.md",
+      "file": "stdenv-platforms.json"
+    },
+    {
+      "slug": "stdenv-darwin",
+      "location": "/docs/stdenv/darwin.md",
+      "file": "stdenv-darwin.json"
+    },
+    {
+      "slug": "adding-packages",
+      "location": "/docs/adding-packages/README.md",
+      "file": "adding-packages.json"
+    },
+    {
+      "slug": "building-packages",
+      "location": "/docs/building-packages/README.md",
+      "file": "building-packages.json"
+    },
+    {
+      "slug": "building-packages-obsolete-patches",
+      "location": "/docs/building-packages/obsolete-patches.md",
+      "file": "building-packages-obsolete-patches.json"
+    },
+    {
+      "slug": "building-packages-dependency-failures",
+      "location": "/docs/building-packages/dependency-failures.md",
+      "file": "building-packages-dependency-failures.json"
+    },
+    {
+      "slug": "building-packages-compiler-errors",
+      "location": "/docs/building-packages/compiler-errors.md",
+      "file": "building-packages-compiler-errors.json"
+    },
+    {
+      "slug": "building-packages-cmake-packages",
+      "location": "/docs/building-packages/cmake-packages.md",
+      "file": "building-packages-cmake-packages.json"
+    },
+    {
+      "slug": "building-packages-python-packages",
+      "location": "/docs/building-packages/python-packages.md",
+      "file": "building-packages-python-packages.json"
+    },
+    {
+      "slug": "building-packages-rust-packages",
+      "location": "/docs/building-packages/rust-packages.md",
+      "file": "building-packages-rust-packages.json"
+    }
+  ]
+}

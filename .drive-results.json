@@ -1,0 +1,35 @@
+{
+  "workflow": "drive",
+  "startedAt": "2026-09-29T18:24:42Z",
+  "active": "working",
+  "status": "running",
+  "steps": [
+    {
+      "name": "sync",
+      "status": "passed",
+      "verification": "git fetch ok; forge=github; noGit=false",
+      "startedAt": "2026-09-29T18:24:41Z",
+      "completedAt": "2026-09-29T18:24:42Z"
+    },
+    {
+      "name": "research",
+      "status": "passed",
+      "verification": "probe STOPPED the run: the artifact's repository is PRIVATE while the fork is PUBLIC, so the fork's CI cannot fetch the pinned input. Pin mechanism solved (git+https + refs/heads), and the flake input itself works locally, but it cannot work in CI without a credential.",
+      "startedAt": "2026-09-29T18:24:42Z",
+      "completedAt": "2026-09-29T18:26:20Z"
+    },
+    {
+      "name": "branch",
+      "status": "passed",
+      "verification": "node/content-format from master@782d557; origin=fork (writable), upstream untouched",
+      "startedAt": "2026-09-29T18:28:56Z",
+      "completedAt": "2026-09-29T18:28:57Z"
+    }
+  ],
+  "forge": "github",
+  "noGit": false,
+  "pendingStep": {
+    "name": "probe",
+    "startedAt": "2026-09-29T18:28:57Z"
+  }
+}
