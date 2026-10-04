@@ -6,13 +6,19 @@
     treefmt-nix.url = "github:numtide/treefmt-nix";
     nix-lib.url = "github:ekala-project/nix-lib";
     # The content-format artifact, consumed as a pinned input (docs/dag/pr-dag.json ->
-    # ContentFormat). The ref is explicit because `github:` URL grammar cannot express a
-    # branch containing a slash — it parses the remainder as a PATH — and the revision is
-    # recorded in flake.lock either way, so the read is a fixed commit.
+    # ContentFormat). Points at `main`: the staging branch this once named
+    # (`node/format-artifact`) has been promoted and merged, so the artifact now has a
+    # permanent, published home. The revision is recorded in flake.lock, so the read is a
+    # fixed commit even though the ref is a branch.
+    #
+    # The `git+https` transport, NOT the `github:` scheme: this repository is PRIVATE while
+    # the consuming fork is public (drift D15), so the GitHub API route answers 404 without a
+    # token, while git resolves it through the local credential helper. The ref is explicit
+    # because `github:` URL grammar cannot express a branch containing a slash.
     #
     # This input is DEV TOOLING only: the artifact's validator is not packaged into this
     # repository's package set, because a repository does not need it to build its packages.
-    ekala-org.url = "git+https://github.com/ekala-project/ekala-org?ref=refs/heads/node/format-artifact";
+    ekala-org.url = "git+https://github.com/ekala-project/ekala-org?ref=refs/heads/main";
     # The EMITTER (the parser). The format artifact ships the validator; the design also asks
     # for "one pinned parser", and this repository has none, so it is taken from a nixpkgs.
     #
